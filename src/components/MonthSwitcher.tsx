@@ -10,6 +10,7 @@ import {
   shiftMonth,
 } from "@/lib/time";
 import { CalendarModule } from "./CalendarModule";
+import { CalendarSkeleton } from "./CalendarSkeleton";
 import { useMotionPrefs } from "./MotionPrefsProvider";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -31,7 +32,8 @@ export function MonthSwitcher({
   const [loading, setLoading] = useState(false);
 
   const cache = useRef(new Map<string, DaySummary[]>());
-  const [days, setDays] = useState<DaySummary[]>(initialDays);
+  // null → data for the current month isn't ready yet (show skeleton).
+  const [days, setDays] = useState<DaySummary[] | null>(initialDays);
 
   const current = currentMonthIST();
   const atCurrent = year === current.year && month === current.month;
@@ -56,9 +58,12 @@ export function MonthSwitcher({
     const cached = cache.current.get(k);
     if (cached) {
       setDays(cached);
+      setLoading(false);
       return;
     }
     let alive = true;
+    // Drop stale data so a skeleton shows instead of the previous month.
+    setDays(null);
     setLoading(true);
     fetch(`/api/reports?month=${k}`)
       .then((r) => r.json())
@@ -140,9 +145,13 @@ export function MonthSwitcher({
               if (info.offset.x < -60) go(1);
               else if (info.offset.x > 60) go(-1);
             }}
-            className={clsx("touch-pan-y", loading && "opacity-60")}
+            className="touch-pan-y"
           >
-            <CalendarModule days={days} animate />
+            {days ? (
+              <CalendarModule days={days} animate />
+            ) : (
+              <CalendarSkeleton year={year} month1={month} />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
