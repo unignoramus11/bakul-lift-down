@@ -1,5 +1,5 @@
 import { PrismaClient } from "@/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { makePgAdapter } from "./pgAdapter";
 
 // Prisma 7 runs on driver adapters. We hand it a pg pool pointed at
 // DATABASE_URL so it works cleanly on serverless (Vercel) with a pooled
@@ -11,7 +11,7 @@ const makeClient = () => {
       "DATABASE_URL is not set. Copy .env.example to .env and add a Postgres connection string.",
     );
   }
-  const adapter = new PrismaPg({ connectionString });
+  const adapter = makePgAdapter(connectionString);
   return new PrismaClient({ adapter });
 };
 

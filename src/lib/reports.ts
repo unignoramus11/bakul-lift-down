@@ -19,7 +19,11 @@ export type ReportDTO = {
   createdAt: string; // ISO instant (UTC)
 };
 
-export type DayStatus = "DOWN" | "OPERATIONAL" | "EMPTY";
+// CLEAR   — no downtime reported that day at all.
+// DOWN    — currently down: the latest report that day is a downtime.
+// RESTORED— was down but the latest report that day is a restoration.
+// EMPTY   — the day hasn't happened yet (calendar placeholder only).
+export type DayStatus = "DOWN" | "RESTORED" | "CLEAR" | "EMPTY";
 
 export type DaySummary = {
   dateKey: string;
@@ -33,11 +37,15 @@ export type DaySummary = {
   lastReportAt: string | null;
 };
 
-/** Latest-observation-wins status for a set of reports on one day. */
+/**
+ * A day's status. A restoration only exists if the lift was down, so the
+ * latest report decides "currently down" vs "was down, now restored"; a day
+ * with no reports is CLEAR (never had downtime). Callers map future days with
+ * no reports to EMPTY.
+ */
 export function statusFromReports(reports: ReportDTO[]): DayStatus {
-  if (reports.length === 0) return "OPERATIONAL";
-  const latest = latestReport(reports);
-  return latest.kind === "DOWN" ? "DOWN" : "OPERATIONAL";
+  if (reports.length === 0) return "CLEAR";
+  return latestReport(reports).kind === "DOWN" ? "DOWN" : "RESTORED";
 }
 
 /** Most recent report by wall-clock instant. Assumes non-empty. */
@@ -59,7 +67,7 @@ export function computeDaySummary(
   if (reports.length === 0) {
     return {
       dateKey,
-      status: isFutureKey(dateKey) ? "EMPTY" : "OPERATIONAL",
+      status: isFutureKey(dateKey) ? "EMPTY" : "CLEAR",
       reportCount: 0,
       downCount: 0,
       restoredCount: 0,
@@ -97,24 +105,30 @@ export function groupByDay(reports: ReportDTO[]): Map<string, ReportDTO[]> {
 }
 
 export type LiveStatus = {
-  status: "DOWN" | "OPERATIONAL";
+  status: "DOWN" | "RESTORED" | "CLEAR";
   /** ISO instant the current state began (the latest report today), or null. */
   since: string | null;
   isDown: boolean;
-  /** Reports filed today. */
+  /** Reports filed today, and the per-kind breakdown. */
   todayCount: number;
+  downToday: number;
+  restoredToday: number;
 };
 
 /** Today's live status for the hero module. */
 export function liveStatusFromToday(todayReports: ReportDTO[]): LiveStatus {
-  const status = statusFromReports(todayReports);
+  const status =
+    todayReports.length === 0 ? "CLEAR" : statusFromReports(todayReports);
   const since =
     todayReports.length > 0 ? latestReport(todayReports).createdAt : null;
+  const downToday = todayReports.filter((r) => r.kind === "DOWN").length;
   return {
-    status: status === "DOWN" ? "DOWN" : "OPERATIONAL",
+    status: status === "EMPTY" ? "CLEAR" : status,
     since,
     isDown: status === "DOWN",
     todayCount: todayReports.length,
+    downToday,
+    restoredToday: todayReports.length - downToday,
   };
 }
 

@@ -5,6 +5,7 @@ import type { ReportDTO } from "@/lib/reports";
 import { formatISTTime } from "@/lib/time";
 import { Stamp } from "./Stamp";
 import { Badge } from "./ui/Badge";
+import { useImageViewer } from "./ImageViewer";
 import { useMotionPrefs } from "./MotionPrefsProvider";
 
 // One field observation on the day's timeline. Rises + fades in, staggered,
@@ -21,6 +22,7 @@ export function TimelineEntry({
   last: boolean;
 }) {
   const { reduced } = useMotionPrefs();
+  const openImage = useImageViewer();
   const down = report.kind === "DOWN";
   const when = new Date(report.createdAt);
 
@@ -59,21 +61,30 @@ export function TimelineEntry({
         </div>
 
         <div className="flex gap-3 p-3">
-          <div className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-[6px] border border-border">
+          <button
+            type="button"
+            onClick={() =>
+              openImage(
+                report.imageData,
+                `FIELD REPORT #${String(ordinal).padStart(2, "0")} · ${formatISTTime(when)}`,
+              )
+            }
+            aria-label="View full photo"
+            className="relative aspect-square w-24 shrink-0 cursor-zoom-in overflow-hidden rounded-[6px] border border-border"
+          >
             <Stamp
-              status={down ? "DOWN" : "OPERATIONAL"}
+              status={down ? "DOWN" : "RESTORED"}
               photo={report.imageData}
               size="sm"
               alt={`Field report ${ordinal}`}
             />
-          </div>
+          </button>
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge tone={down ? "down" : "restored"} dot>
                 {down ? "DOWN → REPORTED" : "RESTORED"}
               </Badge>
-              <Badge tone="neutral">{report.imageMime.replace("image/", "").toUpperCase()}</Badge>
             </div>
 
             {report.note ? (

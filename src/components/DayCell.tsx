@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { clsx } from "@/lib/clsx";
 import type { DaySummary } from "@/lib/reports";
+import { setSlotOrigin } from "@/lib/slotOrigin";
 import { parseDateKey } from "@/lib/time";
 import { Stamp } from "./Stamp";
 
@@ -26,11 +29,14 @@ export function DayCell({
 }) {
   const { day } = parseDateKey(summary.dateKey);
   const isEmpty = summary.status === "EMPTY";
-  const down = summary.status === "DOWN";
 
   return (
     <Link
       href={`/date/${summary.dateKey}`}
+      onClick={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        setSlotOrigin({ left: r.left, top: r.top, width: r.width, height: r.height });
+      }}
       aria-label={`${summary.dateKey}: ${summary.status.toLowerCase()}, ${summary.reportCount} report${
         summary.reportCount === 1 ? "" : "s"
       }`}
@@ -62,16 +68,15 @@ export function DayCell({
         {String(day).padStart(2, "0")}
       </span>
 
-      {/* report count — bottom-right telemetry */}
+      {/* per-kind counts — bottom-right telemetry */}
       {summary.reportCount > 0 ? (
-        <span
-          className={clsx(
-            "absolute bottom-0.5 right-1 z-10 font-tele text-[9px] leading-none",
-            "rounded-[3px] bg-black/55 px-1 py-0.5",
-            down ? "text-danger" : "text-success",
-          )}
-        >
-          {summary.reportCount}×
+        <span className="absolute bottom-0.5 right-1 z-10 flex items-center gap-1 rounded-[3px] bg-black/60 px-1 py-0.5 font-tele text-[9px] leading-none">
+          {summary.downCount > 0 ? (
+            <span className="text-danger">{summary.downCount}↓</span>
+          ) : null}
+          {summary.restoredCount > 0 ? (
+            <span className="text-warning">{summary.restoredCount}↺</span>
+          ) : null}
         </span>
       ) : null}
     </Link>

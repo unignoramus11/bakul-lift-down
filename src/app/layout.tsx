@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { MotionPrefsProvider } from "@/components/MotionPrefsProvider";
+import { ImageViewerProvider } from "@/components/ImageViewer";
 import { StampFilters } from "@/components/StampFilters";
 
 // Primary — UI, headings.
@@ -104,7 +105,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
         <StampFilters />
-        <MotionPrefsProvider>{children}</MotionPrefsProvider>
+        <MotionPrefsProvider>
+          <ImageViewerProvider>{children}</ImageViewerProvider>
+        </MotionPrefsProvider>
       </body>
     </html>
   );

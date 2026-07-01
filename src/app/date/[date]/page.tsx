@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CalendarBackLink } from "@/components/CalendarBackLink";
+import { PhotoZoom } from "@/components/PhotoZoom";
+import { SlotReveal } from "@/components/SlotReveal";
 import { Stamp } from "@/components/Stamp";
 import { StatusStrip } from "@/components/StatusStrip";
 import { TimelineEntry } from "@/components/TimelineEntry";
@@ -11,6 +13,7 @@ import {
   latestReport,
   statusFromReports,
 } from "@/lib/reports";
+import { STATUS_LABEL, STATUS_TONE } from "@/lib/status-style";
 import { formatDateKey, isFutureKey } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -42,26 +45,21 @@ export default async function DateDetail({
 
   const reports = await getDayReports(date); // newest first
   const total = reports.length;
+  const downCount = reports.filter((r) => r.kind === "DOWN").length;
+  const restoredCount = total - downCount;
   const status: DayStatus =
-    total > 0 ? statusFromReports(reports) : isFutureKey(date) ? "EMPTY" : "OPERATIONAL";
+    total > 0 ? statusFromReports(reports) : isFutureKey(date) ? "EMPTY" : "CLEAR";
   const heroPhoto = total > 0 ? latestReport(reports).imageData : null;
   const down = status === "DOWN";
 
   return (
     <>
       <StatusStrip />
+      <SlotReveal fallbackHref={`/?m=${date.slice(0, 7)}`}>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-3 pb-16">
         {/* back + classification */}
         <div className="mb-3 flex items-center justify-between">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 font-tele text-[12px] tracking-[0.1em] text-text-muted transition-colors hover:text-text-2"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
-            </svg>
-            CALENDAR
-          </Link>
+          <CalendarBackLink href={`/?m=${date.slice(0, 7)}`} />
           <span className="font-tele text-[10px] tracking-[0.16em] text-text-disabled">
             SHIFT LOG · OPS
           </span>
@@ -75,13 +73,15 @@ export default async function DateDetail({
                 NO FEED — DATE NOT YET REACHED
               </div>
             ) : (
-              <Stamp
-                status={status}
-                photo={heroPhoto}
-                size="lg"
-                rotation={-7}
-                alt={`Lift status on ${formatDateKey(date)}`}
-              />
+              <PhotoZoom src={heroPhoto} caption={formatDateKey(date)} className="size-full">
+                <Stamp
+                  status={status}
+                  photo={heroPhoto}
+                  size="lg"
+                  rotation={-7}
+                  alt={`Lift status on ${formatDateKey(date)}`}
+                />
+              </PhotoZoom>
             )}
             <span className="absolute left-2 top-2 z-10 rounded-[3px] bg-black/60 px-1.5 py-0.5 font-tele text-[10px] tracking-[0.1em] text-text-2">
               {formatDateKey(date)}
@@ -93,16 +93,20 @@ export default async function DateDetail({
               <div className="font-ui text-[22px] font-semibold leading-none tracking-[0.02em] text-text">
                 {formatDateKey(date)}
               </div>
-              <div className="mt-1.5 font-tele text-[11px] tracking-[0.08em] text-text-muted">
-                {total} FIELD REPORT{total === 1 ? "" : "S"} ON RECORD
+              <div className="mt-1.5 flex items-center gap-2.5 font-tele text-[11px] tracking-[0.08em] text-text-muted">
+                <span>
+                  {total} REPORT{total === 1 ? "" : "S"}
+                </span>
+                {downCount > 0 ? (
+                  <span className="text-danger">{downCount}↓ DOWN</span>
+                ) : null}
+                {restoredCount > 0 ? (
+                  <span className="text-warning">{restoredCount}↺ RESTORED</span>
+                ) : null}
               </div>
             </div>
-            <Badge
-              tone={status === "EMPTY" ? "offline" : down ? "down" : "operational"}
-              dot
-              pulse={down}
-            >
-              {status === "EMPTY" ? "NO DATA" : down ? "DOWN" : "OPERATIONAL"}
+            <Badge tone={STATUS_TONE[status]} dot pulse={down}>
+              {STATUS_LABEL[status]}
             </Badge>
           </div>
         </section>
@@ -132,6 +136,7 @@ export default async function DateDetail({
           </>
         )}
       </main>
+      </SlotReveal>
     </>
   );
 }

@@ -8,7 +8,7 @@ type Tone = "down" | "operational" | "restored" | "offline" | "neutral" | "info"
 const TONES: Record<Tone, string> = {
   down: "text-danger border-danger/50 bg-danger/10",
   operational: "text-success border-success/50 bg-success/10",
-  restored: "text-success border-success/50 bg-success/10",
+  restored: "text-warning border-warning/50 bg-warning/10",
   offline: "text-offline border-offline/50 bg-offline/10",
   info: "text-info border-info/50 bg-info/10",
   neutral: "text-text-muted border-border bg-panel-2",
@@ -42,7 +42,8 @@ export function Badge({
           className={clsx(
             "size-1.5 rounded-full",
             tone === "down" && "bg-danger",
-            (tone === "operational" || tone === "restored") && "bg-success",
+            tone === "operational" && "bg-success",
+            tone === "restored" && "bg-warning",
             tone === "offline" && "bg-offline",
             tone === "info" && "bg-info",
             tone === "neutral" && "bg-text-muted",

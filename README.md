@@ -1,6 +1,6 @@
 # BAKUL LIFT DOWN
 
-Crowd-sourced surveillance log for the Bakul Hostel lift at IIIT Hyderabad — is it down right now? All times IST.
+Crowd-sourced surveillance log for the Bakul Hostel lift at IIIT Hyderabad — is it down right now?
 
 ## Setup
 
@@ -30,7 +30,7 @@ Crowd-sourced surveillance log for the Bakul Hostel lift at IIIT Hyderabad — i
    npm run dev
    ```
 
-   Open http://localhost:3000
+   Open [http://localhost:3000](http://localhost:3000)
 
 ## Deploy (Vercel)
 

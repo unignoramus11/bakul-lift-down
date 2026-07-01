@@ -3,18 +3,17 @@
 import { Dialog } from "@ark-ui/react/dialog";
 import { useEffect, useRef, useState } from "react";
 import { clsx } from "@/lib/clsx";
-import { MAX_IMAGE_KB, MAX_NOTE_LEN } from "@/lib/config";
-import { type CompressResult, compressImage, formatKB } from "@/lib/compress";
+import { MAX_NOTE_LEN } from "@/lib/config";
+import { type CompressResult, compressImage } from "@/lib/compress";
 import type { ReportDTO } from "@/lib/reports";
 import { formatISTDate, formatISTTime } from "@/lib/time";
 import { CompressionMeter } from "./CompressionMeter";
+import { useImageViewer } from "./ImageViewer";
 import { Button } from "./ui/Button";
 import { Badge } from "./ui/Badge";
 
 type Mode = "DOWN" | "RESTORED";
 type Step = "pick" | "compressing" | "ready" | "submitting" | "error";
-
-const TARGET_BYTES = MAX_IMAGE_KB * 1024;
 
 export function ReportSheet({
   open,
@@ -28,14 +27,13 @@ export function ReportSheet({
   onSubmitted: (report: ReportDTO) => void;
 }) {
   const isDown = mode === "DOWN";
-  const accent = isDown ? "var(--color-stamp-down)" : "var(--color-stamp-op)";
+  const accent = isDown ? "var(--color-stamp-down)" : "var(--color-stamp-restored)";
   const fileInput = useRef<HTMLInputElement>(null);
+  const openImage = useImageViewer();
 
   const [step, setStep] = useState<Step>("pick");
   const [preview, setPreview] = useState<string | null>(null);
-  const [originalBytes, setOriginalBytes] = useState(0);
   const [percent, setPercent] = useState(0);
-  const [currentBytes, setCurrentBytes] = useState<number | null>(null);
   const [result, setResult] = useState<CompressResult | null>(null);
   const [note, setNote] = useState("");
   const [stampAt, setStampAt] = useState<Date>(() => new Date());
@@ -46,9 +44,7 @@ export function ReportSheet({
     if (open) {
       setStep("pick");
       setPreview(null);
-      setOriginalBytes(0);
       setPercent(0);
-      setCurrentBytes(null);
       setResult(null);
       setNote("");
       setError(null);
@@ -57,27 +53,19 @@ export function ReportSheet({
 
   async function handleFile(file: File) {
     setStep("compressing");
-    setOriginalBytes(file.size);
     setPercent(0);
-    setCurrentBytes(file.size);
     setPreview((p) => {
       if (p) URL.revokeObjectURL(p);
       return URL.createObjectURL(file);
     });
     try {
-      const res = await compressImage(file, (p) => {
-        setPercent(p);
-        setCurrentBytes(
-          Math.max(TARGET_BYTES, file.size - (file.size - TARGET_BYTES) * (p / 100)),
-        );
-      });
+      const res = await compressImage(file, (p) => setPercent(p));
       setResult(res);
-      setCurrentBytes(res.bytes);
       setPercent(100);
       setStampAt(new Date());
       setStep("ready");
     } catch {
-      setError("Compression failed. Photo was not saved. Try again.");
+      setError("Could not process the photo. It was not saved. Try again.");
       setStep("error");
     }
   }
@@ -180,7 +168,12 @@ export function ReportSheet({
               <div className="space-y-4">
                 {/* preview with viewfinder brackets */}
                 {preview ? (
-                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[6px] border border-border bg-black">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => preview && openImage(preview, "SELECTED PHOTO")}
+                    className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-[6px] border border-border bg-black"
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={preview}
@@ -196,8 +189,6 @@ export function ReportSheet({
 
                 <CompressionMeter
                   percent={percent}
-                  originalBytes={originalBytes}
-                  currentBytes={currentBytes}
                   done={step !== "compressing"}
                   tone={isDown ? "down" : "restored"}
                 />
@@ -232,14 +223,10 @@ export function ReportSheet({
 
                     {/* auto-filled metadata — the confirmation */}
                     <dl className="rounded-[6px] border border-border bg-panel px-3 py-2.5 font-tele text-[12px]">
-                      <Meta k="TIMESTAMP" v={formatISTTime(stampAt)} />
+                      <Meta k="TIME" v={formatISTTime(stampAt)} />
                       <Meta k="DATE" v={formatISTDate(stampAt)} />
                       <Meta
-                        k="PAYLOAD"
-                        v={result ? formatKB(result.bytes) : "—"}
-                      />
-                      <Meta
-                        k="DELTA"
+                        k="STATUS"
                         v={isDown ? "→ REPORTED DOWN" : "→ RESTORED"}
                         accent={accent}
                       />

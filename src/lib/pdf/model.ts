@@ -18,13 +18,14 @@ export type ReportStats = {
   to: string;
   totalDays: number;
   observedDays: number; // days that have actually occurred
-  downDays: number;
-  operationalDays: number;
+  downDays: number; // ended the day still down
+  restoredDays: number; // had downtime but recovered
+  clearDays: number; // no downtime at all
   totalReports: number;
   downReports: number;
   restoreReports: number;
-  uptimePct: number; // over observed days
-  longestDownStreak: number; // consecutive down days
+  clearRate: number; // % of observed days with zero downtime
+  longestOutageStreak: number; // consecutive days with any downtime
 };
 
 export type ReportModel = {
@@ -55,25 +56,27 @@ export function buildReportModel(
         ? statusFromReports(rs)
         : isFutureKey(dateKey)
           ? "EMPTY"
-          : "OPERATIONAL";
+          : "CLEAR";
     return { dateKey, status, reports: rs };
   });
 
   const observed = days.filter((d) => d.status !== "EMPTY");
   const downDays = observed.filter((d) => d.status === "DOWN").length;
-  const operationalDays = observed.length - downDays;
+  const restoredDays = observed.filter((d) => d.status === "RESTORED").length;
+  const clearDays = observed.filter((d) => d.status === "CLEAR").length;
   const downReports = reports.filter((r) => r.kind === "DOWN").length;
 
-  // longest run of consecutive DOWN days
+  // longest run of consecutive days with any downtime (down or restored)
   let streak = 0;
   let longest = 0;
   for (const d of days) {
-    if (d.status === "DOWN") {
+    if (d.status === "DOWN" || d.status === "RESTORED") {
       streak += 1;
       longest = Math.max(longest, streak);
-    } else {
+    } else if (d.status === "CLEAR") {
       streak = 0;
     }
+    // EMPTY (future) days don't break an otherwise-contiguous run
   }
 
   const stats: ReportStats = {
@@ -82,15 +85,16 @@ export function buildReportModel(
     totalDays: days.length,
     observedDays: observed.length,
     downDays,
-    operationalDays,
+    restoredDays,
+    clearDays,
     totalReports: reports.length,
     downReports,
     restoreReports: reports.length - downReports,
-    uptimePct:
+    clearRate:
       observed.length > 0
-        ? Math.round((operationalDays / observed.length) * 1000) / 10
+        ? Math.round((clearDays / observed.length) * 1000) / 10
         : 100,
-    longestDownStreak: longest,
+    longestOutageStreak: longest,
   };
 
   return {

@@ -26,8 +26,11 @@
   --color-danger: #ff4d67;
   --color-offline: #5f6b7a;
 
-  /* Stamp inks */
+  /* Stamp inks — one per reported state */
   --color-stamp-down: #ff4d67;
+  --color-stamp-clear: #44d17a;
+  --color-stamp-restored: #ffc857;
+  /* legacy alias */
   --color-stamp-op: #44d17a;
 
   /* Text */
@@ -136,6 +139,20 @@ body {
   outline-offset: 2px;
 }
 
+/* ─── Cursors — Tailwind v4 preflight drops the default button pointer ──────*/
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+label[for],
+summary,
+select:not(:disabled) {
+  cursor: pointer;
+}
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Motion — ambient "alive" layer. Every one has a reduced-motion fallback.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -231,6 +248,18 @@ body {
   }
   to {
     transform: translateX(100%);
+  }
+}
+
+/* Photo lightbox: settle in from a hair smaller. */
+@keyframes viewer-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

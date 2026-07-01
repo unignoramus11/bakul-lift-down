@@ -51,12 +51,18 @@ export function HomeShell({
   }, []);
 
   const onSubmitted = useCallback((report: ReportDTO) => {
-    setLive((prev) => ({
-      status: report.kind === "DOWN" ? "DOWN" : "OPERATIONAL",
-      since: report.createdAt,
-      isDown: report.kind === "DOWN",
-      todayCount: prev.todayCount + 1,
-    }));
+    setLive((prev) => {
+      const isDown = report.kind === "DOWN";
+      return {
+        // A restore only happens after downtime, so it lands as RESTORED.
+        status: isDown ? "DOWN" : "RESTORED",
+        since: report.createdAt,
+        isDown,
+        todayCount: prev.todayCount + 1,
+        downToday: prev.downToday + (isDown ? 1 : 0),
+        restoredToday: prev.restoredToday + (isDown ? 0 : 1),
+      };
+    });
     setRefreshSignal((n) => n + 1);
     notify({
       title: report.kind === "DOWN" ? "Downtime filed" : "Restoration filed",
@@ -84,7 +90,7 @@ export function HomeShell({
         </Link>
 
         <p className="px-1 pt-1 text-center font-tele text-[10px] tracking-[0.1em] text-text-disabled">
-          CROWD-SOURCED · ALL TIMES IST · TAP ANY DAY FOR THE LOG
+          CROWD-SOURCED · TAP ANY DAY FOR THE LOG
         </p>
       </main>
 

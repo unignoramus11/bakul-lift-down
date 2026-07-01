@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { clsx } from "@/lib/clsx";
 import type { DayStatus } from "@/lib/reports";
+import { STATUS_HALO, STATUS_INK, STATUS_LABEL } from "@/lib/status-style";
 import { useMotionPrefs } from "./MotionPrefsProvider";
 
 // The signature object: a rubber-stamp mark, ink-red (DOWN) or ink-green
@@ -70,10 +71,9 @@ export function Stamp({
 }) {
   const { reduced } = useMotionPrefs();
   const s = SIZES[size];
-  const isDown = status === "DOWN";
-  const ink = isDown ? "var(--color-stamp-down)" : "var(--color-stamp-op)";
-  const halo = isDown ? "rgba(255,77,103,0.15)" : "rgba(68,209,122,0.15)";
-  const label = isDown ? "DOWN" : "OPERATIONAL";
+  const ink = STATUS_INK[status];
+  const halo = STATUS_HALO[status];
+  const label = STATUS_LABEL[status];
 
   return (
     <div

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { MAX_IMAGE_KB } from "@/lib/config";
 import { buildReportModel } from "@/lib/pdf/model";
 import type { ReportDTO } from "@/lib/reports";
 import {
@@ -23,7 +22,6 @@ export function ExportPanel() {
   const today = useMemo(() => dateKeyIST(), []);
   const [from, setFrom] = useState(`${year}-${pad(month)}-01`);
   const [to, setTo] = useState(today);
-  const [sample, setSample] = useState(false);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -32,31 +30,21 @@ export function ExportPanel() {
   async function generate() {
     if (invalid || busy) return;
     setBusy(true);
-    setStatus("QUERYING RANGE…");
+    setStatus("PREPARING…");
     try {
-      let reports: ReportDTO[] = [];
-      let useSample = sample;
+      const res = await fetch(`/api/reports?from=${from}&to=${to}`);
+      const json = (await res.json()) as { reports?: ReportDTO[] };
+      const reports: ReportDTO[] = json.reports ?? [];
 
-      if (sample) {
-        const { makeMockReports } = await import("@/lib/pdf/prepare");
-        reports = makeMockReports(from, to);
-      } else {
-        const res = await fetch(`/api/reports?from=${from}&to=${to}`);
-        const json = (await res.json()) as { reports?: ReportDTO[] };
-        reports = json.reports ?? [];
-        if (reports.length === 0) {
-          const { makeMockReports } = await import("@/lib/pdf/prepare");
-          reports = makeMockReports(from, to);
-          useSample = true;
-          notify({
-            title: "No data in range",
-            description: "Generated a sample digest instead.",
-            type: "info",
-          });
-        }
+      if (reports.length === 0) {
+        notify({
+          title: "No reports in range",
+          description: "The digest will show an empty log.",
+          type: "info",
+        });
       }
 
-      setStatus(`RENDERING ${reports.length} REPORTS…`);
+      setStatus("GENERATING DIGEST…");
       const { buildThumbMap } = await import("@/lib/pdf/prepare");
       const [{ pdf }, { ReportPdf }, thumbs] = await Promise.all([
         import("@react-pdf/renderer"),
@@ -70,7 +58,6 @@ export function ExportPanel() {
           model={model}
           thumbs={thumbs}
           generatedAt={formatISTStamp(new Date())}
-          sample={useSample}
         />,
       ).toBlob();
 
@@ -81,10 +68,10 @@ export function ExportPanel() {
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
       setStatus("DIGEST DOWNLOADED");
-      notify({ title: "Digest ready", description: "PDF downloaded.", type: "success" });
+      notify({ title: "Digest ready", description: "Your PDF has downloaded.", type: "success" });
     } catch (err) {
       console.error(err);
-      setStatus("RENDER FAILED");
+      setStatus("SOMETHING WENT WRONG");
       notify({
         title: "Export failed",
         description: "Could not build the PDF. Try again.",
@@ -127,9 +114,8 @@ export function ExportPanel() {
 
         <div className="space-y-4 px-4 py-4">
           <p className="font-body text-[13px] leading-snug text-text-muted">
-            Generate a surveillance-style PDF digest of lift downtime over a date
-            range — summary stats, a daily status map, and the full field log.
-            Rendered entirely on your device.
+            Generate a PDF digest of lift downtime over a date range — summary
+            stats, a daily status map, and the full field log.
           </p>
 
           <div className="grid grid-cols-2 gap-3">
@@ -164,33 +150,6 @@ export function ExportPanel() {
             </p>
           )}
 
-          {/* sample toggle */}
-          <button
-            type="button"
-            onClick={() => setSample((v) => !v)}
-            className="flex w-full items-center justify-between rounded-[6px] border border-border bg-bg-2 px-3 py-2.5 text-left"
-          >
-            <span>
-              <span className="block font-ui text-[13px] font-medium text-text-2">
-                Sample data
-              </span>
-              <span className="block font-tele text-[10px] tracking-[0.06em] text-text-muted">
-                preview the layout with mock incidents
-              </span>
-            </span>
-            <span
-              className={`relative h-5 w-9 rounded-full border transition-colors ${
-                sample ? "border-border-active bg-action/30" : "border-border bg-panel"
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 size-3.5 rounded-full transition-all ${
-                  sample ? "left-4 bg-info" : "left-0.5 bg-text-muted"
-                }`}
-              />
-            </span>
-          </button>
-
           <Button
             variant="action"
             full
@@ -204,11 +163,7 @@ export function ExportPanel() {
             <p className="text-center font-tele text-[11px] tracking-[0.1em] text-text-muted">
               {status}
             </p>
-          ) : (
-            <p className="text-center font-tele text-[10px] tracking-[0.1em] text-text-disabled">
-              IMAGES DESATURATED · UNDER {MAX_IMAGE_KB} KB EACH · ALL TIMES IST
-            </p>
-          )}
+          ) : null}
         </div>
       </section>
       <SystemNotices />
