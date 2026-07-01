@@ -1,0 +1,52 @@
+// Lift Watch — data model
+// One asset (the Bakul lift). Every row is a field observation.
+// learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// A single field report. Either an observation that the lift is DOWN,
+/// or an observation that it has been RESTORED. Both carry a photo.
+model Report {
+  id String @id @default(cuid())
+
+  /// DOWN | RESTORED
+  kind ReportKind
+
+  /// Heavily compressed image, stored inline as a data URL (base64).
+  /// Kept under the client-side size budget (~20 KB) so it fits in a row.
+  imageData String @db.Text
+
+  /// MIME type of the compressed image (usually image/webp or image/jpeg).
+  imageMime String @default("image/webp")
+
+  /// Byte size of the compressed image, for telemetry display.
+  imageBytes Int @default(0)
+
+  /// Optional free-text note the reporter attached ("stuck on 3rd floor",
+  /// "doors won't close", "back online, tested twice"). Rendered on the
+  /// date-detail timeline.
+  note String? @db.Text
+
+  /// IST calendar day this report belongs to, as "YYYY-MM-DD".
+  /// Computed at write time from the IST wall clock so month/day
+  /// grouping never drifts across the UTC date boundary.
+  dateKey String
+
+  /// Wall-clock instant of the report, stored UTC. Always rendered in IST.
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([dateKey])
+  @@index([createdAt])
+}
+
+enum ReportKind {
+  DOWN
+  RESTORED
+}

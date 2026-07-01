@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BAKUL LIFT DOWN
 
-## Getting Started
+Crowd-sourced surveillance log for the Bakul Hostel lift at IIIT Hyderabad — is it down right now? All times IST.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Install**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   npm install
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Database** — create a free Postgres (e.g. [Neon](https://neon.tech), Vercel Postgres, or Supabase), then:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   cp .env.example .env
+   ```
 
-## Learn More
+   Fill in `DATABASE_URL` (pooled) and `DIRECT_URL` (direct) in `.env`.
 
-To learn more about Next.js, take a look at the following resources:
+3. **Migrate**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run db:migrate
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Run**
 
-## Deploy on Vercel
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   Open http://localhost:3000
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy (Vercel)
+
+Import the repo, add `DATABASE_URL`, `DIRECT_URL`, and `NEXT_PUBLIC_MAX_IMAGE_KB` (default `20`) as env vars, and deploy. Run `npm run db:migrate` once against the production database.
+
+## Stack
+
+Next.js · Prisma + Postgres · Ark UI · Motion · Tailwind v4. Report images are compressed client-side to under 20 KB (`NEXT_PUBLIC_MAX_IMAGE_KB`) and stored inline. PDF digests are generated entirely in the browser.

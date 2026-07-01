@@ -1,26 +1,267 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ═══════════════════════════════════════════════════════════════════════════
+   BAKUL LIFT DOWN — design tokens (from design-language.md, v2.0)
+   90/10 rule: 90% grayscale, color reserved for status only.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@theme {
+  /* Backgrounds */
+  --color-bg: #05070a;
+  --color-bg-2: #0b1118;
+  --color-panel: #101923;
+  --color-panel-2: #172331;
+
+  /* Borders */
+  --color-border: #243240;
+  --color-border-active: #3d8bff;
+  --color-border-alert: #ff595e;
+  --color-border-success: #44d17a;
+  --color-border-muted: #1a2532;
+
+  /* Accents (status only) */
+  --color-info: #4fd8ff;
+  --color-action: #2d7ff9;
+  --color-success: #4ade80;
+  --color-warning: #ffc857;
+  --color-danger: #ff4d67;
+  --color-offline: #5f6b7a;
+
+  /* Stamp inks */
+  --color-stamp-down: #ff4d67;
+  --color-stamp-op: #44d17a;
+
+  /* Text */
+  --color-text: #f5f7fa;
+  --color-text-2: #b3c1cf;
+  --color-text-muted: #6d7c8d;
+  --color-text-disabled: #475564;
+
+  /* Type families */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-body: var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+
+  /* Radius — 8px everywhere, never pill, never fully square */
+  --radius: 8px;
+
+  /* Breakpoints (mobile-first; defaults are mobile) */
+  --breakpoint-tablet: 640px;
+  --breakpoint-desktop: 1024px;
+
+  /* Motion durations */
+  --dur-press: 120ms;
+  --dur-panel: 180ms;
+  --dur-sheet: 250ms;
+  --dur-stamp: 400ms;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ─── Base ─────────────────────────────────────────────────────────────────*/
+* {
+  border-color: var(--color-border);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  background: var(--color-bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+/* Never a flat void — a faint blueprint grid, fixed so it doesn't scroll. */
+.ops-surface {
+  position: relative;
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(rgba(61, 139, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61, 139, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(61, 139, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61, 139, 255, 0.02) 1px, transparent 1px);
+  background-size:
+    96px 96px,
+    96px 96px,
+    24px 24px,
+    24px 24px;
+  background-position: -1px -1px;
+  background-attachment: fixed;
+}
+
+/* Grain overlay for stamped photos — printed contact-sheet feel. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Desaturated photo treatment — grayscale + contrast, printed look. */
+.photo-desat {
+  filter: grayscale(1) contrast(1.08) brightness(0.96);
+}
+
+/* ─── Typography helpers ───────────────────────────────────────────────────*/
+.font-ui {
+  font-family: var(--font-sans);
+}
+.font-tele {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Scrollbars — thin, ops-console ───────────────────────────────────────*/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ─── Focus — Active blue ring, never a browser default ────────────────────*/
+:focus-visible {
+  outline: 2px solid var(--color-border-active);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion — ambient "alive" layer. Every one has a reduced-motion fallback.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Today's calendar cell: slow breathing border glow, ~2s. */
+@keyframes breathe-border {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(61, 139, 255, 0.4);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px rgba(61, 139, 255, 0.85);
+  }
+}
+.breathe {
+  animation: breathe-border 2s ease-in-out infinite;
+}
+
+/* LIVE / DOWN badge — one breath every 2s, deliberate, never a fast blink. */
+@keyframes badge-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.pulse-slow {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* Live REC dot. */
+@keyframes rec-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+.rec-dot {
+  animation: rec-dot 1.6s steps(1, end) infinite;
+}
+
+/* Sheet / backdrop enter+exit — CSS @keyframes so Ark's Presence can detect
+   completion and unmount cleanly. Bottom sheet on mobile, right panel on
+   desktop (see the tablet: overrides in the component). */
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in-y {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes sheet-out-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-in-x {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes sheet-out-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Timeline entry: rises 8px and fades in, like a printout appearing. */
+@keyframes entry-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe,
+  .pulse-slow,
+  .rec-dot {
+    animation: none !important;
+  }
+}
+
+:root[data-reduce-motion="true"] [data-sheet],
+:root[data-reduce-motion="true"] [data-backdrop] {
+  animation-duration: 1ms !important;
+}
+
+/* App-level reduced-motion toggle mirrors the media query. */
+:root[data-reduce-motion="true"] .breathe,
+:root[data-reduce-motion="true"] .pulse-slow,
+:root[data-reduce-motion="true"] .rec-dot {
+  animation: none !important;
 }
