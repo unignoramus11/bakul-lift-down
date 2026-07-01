@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "BAKUL LIFT DOWN — surveillance log for the Bakul Hostel lift";
+export const alt = "BAKUL LIFT DOWN — downtime log for the Bakul Hostel lift";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -35,10 +35,10 @@ export default function OgImage() {
               }}
             />
             <div style={{ color: "#6D7C8D", fontSize: 24, letterSpacing: 4 }}>
-              LIFT-01 · BAKUL HOSTEL · IIIT HYDERABAD
+              BAKUL HOSTEL · IIIT HYDERABAD
             </div>
           </div>
-          <div style={{ color: "#6D7C8D", fontSize: 24, letterSpacing: 4 }}>REC ●</div>
+          <div style={{ color: "#6D7C8D", fontSize: 24, letterSpacing: 4 }}></div>
         </div>
 
         {/* headline + stamp */}
@@ -56,7 +56,7 @@ export default function OgImage() {
               BAKUL LIFT DOWN
             </div>
             <div style={{ color: "#B3C1CF", fontSize: 30, marginTop: 24, letterSpacing: 2 }}>
-              Crowd-sourced downtime surveillance for one very tired lift.
+              Crowd-sourced downtime tracking for one very tired lift.
             </div>
           </div>
         </div>

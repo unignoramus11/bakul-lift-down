@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-// The PDF digest — LIGHT MODE (printer-friendly). Rendered client-side with
+// The PDF report — LIGHT MODE (printer-friendly). Rendered client-side with
 // @react-pdf/renderer (built-in Helvetica/Courier, no font loading, robust on
 // Vercel). Three states: CLEAR / DOWN / RESTORED. Status colors are darkened
 // for contrast on white.
@@ -184,7 +184,7 @@ function LogoMark() {
 function Footer({ generatedAt }: { generatedAt: string }) {
   return (
     <View style={s.footer} fixed>
-      <Text style={s.footTxt}>BAKUL LIFT DOWN · CROWD-SOURCED SENSOR LOG</Text>
+      <Text style={s.footTxt}>BAKUL LIFT DOWN · CROWD-SOURCED</Text>
       <Text style={s.footTxt}>ALL TIMES IST · {generatedAt}</Text>
       <Text
         style={s.footTxt}
@@ -226,16 +226,16 @@ export function ReportPdf({
             <LogoMark />
             <View>
               <Text style={s.title}>BAKUL LIFT DOWN</Text>
-              <Text style={s.subtitle}>BAKUL HOSTEL · IIIT HYDERABAD · LIFT-01</Text>
+              <Text style={s.subtitle}>BAKUL HOSTEL · IIIT HYDERABAD</Text>
             </View>
           </View>
-          <Text style={s.kicker}>INCIDENT DIGEST</Text>
+          <Text style={s.kicker}>DOWNTIME REPORT</Text>
         </View>
 
         <View style={s.rule} />
 
         <View style={s.classBar}>
-          <Text style={s.kicker}>SURVEILLANCE SHIFT LOG</Text>
+          <Text style={s.kicker}>CROWD-SOURCED LOG</Text>
           <Text style={s.kicker}>
             {formatDateKey(stats.from)} - {formatDateKey(stats.to)}
           </Text>
@@ -245,7 +245,7 @@ export function ReportPdf({
           <MetaCell k="REPORTING PERIOD" v={`${stats.totalDays} DAYS`} />
           <MetaCell k="DAYS OBSERVED" v={`${stats.observedDays}`} />
           <MetaCell k="GENERATED" v={generatedAt} />
-          <MetaCell k="TOTAL FIELD REPORTS" v={`${stats.totalReports}`} />
+          <MetaCell k="TOTAL REPORTS" v={`${stats.totalReports}`} />
         </View>
 
         <Text style={s.sectionTitle}>SUMMARY</Text>
@@ -284,10 +284,10 @@ export function ReportPdf({
         <Footer generatedAt={generatedAt} />
       </Page>
 
-      {/* ── Field log ───────────────────────────────────────────────── */}
+      {/* ── Report log ───────────────────────────────────────────────── */}
       <Page size="A4" style={s.page} wrap>
         <View style={s.headRow}>
-          <Text style={s.title}>FIELD LOG</Text>
+          <Text style={s.title}>REPORT LOG</Text>
           <Text style={s.kicker}>{incidentDays.length} DAYS WITH REPORTS</Text>
         </View>
         <View style={s.rule} />
@@ -328,7 +328,7 @@ export function ReportPdf({
                       <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text style={s.entryId}>
-                            FIELD REPORT #{String(i + 1).padStart(2, "0")}
+                            REPORT #{String(i + 1).padStart(2, "0")}
                           </Text>
                           <Text style={s.entryTime}>{istHM(new Date(r.createdAt))} IST</Text>
                         </View>

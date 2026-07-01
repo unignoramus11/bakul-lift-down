@@ -1,7 +1,7 @@
 import { clsx } from "@/lib/clsx";
 
 // Brand mark: camera-viewfinder corner brackets framing a lift shaft with an
-// up-chevron and a down-chevron — "the asset under surveillance." Uses
+// up-chevron and a down-chevron — the lift being watched. Uses
 // currentColor for the frame so it inherits, with a fixed danger accent on the
 // down-chevron (the whole point of the app).
 export function Logo({

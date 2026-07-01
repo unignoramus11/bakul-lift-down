@@ -53,7 +53,7 @@ export function TimelineEntry({
       <div className="mb-3 flex-1 overflow-hidden rounded-[var(--radius)] border border-border bg-panel">
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
           <span className="font-tele text-[12px] tracking-[0.12em] text-text-2">
-            FIELD REPORT #{String(ordinal).padStart(2, "0")}
+            REPORT #{String(ordinal).padStart(2, "0")}
           </span>
           <span className="font-tele text-[11px] tracking-[0.06em] text-text-muted tabular-nums">
             {formatISTTime(when)}
@@ -66,7 +66,7 @@ export function TimelineEntry({
             onClick={() =>
               openImage(
                 report.imageData,
-                `FIELD REPORT #${String(ordinal).padStart(2, "0")} · ${formatISTTime(when)}`,
+                `REPORT #${String(ordinal).padStart(2, "0")} · ${formatISTTime(when)}`,
               )
             }
             aria-label="View full photo"
@@ -76,7 +76,7 @@ export function TimelineEntry({
               status={down ? "DOWN" : "RESTORED"}
               photo={report.imageData}
               size="sm"
-              alt={`Field report ${ordinal}`}
+              alt={`Report ${ordinal}`}
             />
           </button>
 

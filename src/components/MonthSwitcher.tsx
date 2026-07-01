@@ -110,7 +110,7 @@ export function MonthSwitcher({
             {formatMonthLabel(year, month)}
           </span>
           <span className="font-tele text-[10px] tracking-[0.12em] text-text-muted">
-            {loading ? "SYNCING…" : "SHIFT LOG"}
+            {loading ? "SYNCING…" : "LOG"}
           </span>
         </div>
 

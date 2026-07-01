@@ -30,7 +30,7 @@ export async function generateMetadata({
   const pretty = formatDateKey(date);
   return {
     title: `${pretty} · BAKUL LIFT DOWN`,
-    description: `Shift log for the Bakul Hostel lift on ${pretty}. Field reports, photos and status changes.`,
+    description: `Log of the Bakul Hostel lift on ${pretty}. Reports, photos and status changes.`,
     alternates: { canonical: `/date/${date}` },
   };
 }
@@ -61,7 +61,7 @@ export default async function DateDetail({
         <div className="mb-3 flex items-center justify-between">
           <CalendarBackLink href={`/?m=${date.slice(0, 7)}`} />
           <span className="font-tele text-[10px] tracking-[0.16em] text-text-disabled">
-            SHIFT LOG · OPS
+            LOG
           </span>
         </div>
 
@@ -70,7 +70,7 @@ export default async function DateDetail({
           <div className="relative aspect-[16/7] w-full bg-black">
             {status === "EMPTY" ? (
               <div className="grid size-full place-items-center font-tele text-[12px] tracking-[0.12em] text-text-disabled">
-                NO FEED — DATE NOT YET REACHED
+                NO DATA — DATE NOT YET REACHED
               </div>
             ) : (
               <PhotoZoom src={heroPhoto} caption={formatDateKey(date)} className="size-full">
@@ -120,7 +120,7 @@ export default async function DateDetail({
           <>
             <div className="mb-2 flex items-center gap-2 font-tele text-[11px] tracking-[0.14em] text-text-muted">
               <span className="size-1.5 rounded-full bg-danger rec-dot" />
-              INCIDENT TIMELINE · NEWEST FIRST
+              TIMELINE · NEWEST FIRST
             </div>
             <ol className="list-none">
               {reports.map((report, i) => (

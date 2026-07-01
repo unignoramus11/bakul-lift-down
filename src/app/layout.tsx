@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   applicationName: "BAKUL LIFT DOWN",
   description:
-    "Surveillance ops for the Bakul Hostel lift, IIIT Hyderabad. Crowd-sourced downtime tracking.",
+    "A crowd-sourced tracker for whether the Bakul Hostel lift at IIIT Hyderabad is working.",
   keywords: [
     "Bakul Hostel",
     "IIIT Hyderabad",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "BAKUL LIFT DOWN",
     description:
-      "Is the Bakul Hostel lift down? Crowd-sourced surveillance log.",
+      "Is the Bakul Hostel lift down? A crowd-sourced log.",
     url: "https://bakul-lift-down.vercel.app",
     siteName: "BAKUL LIFT DOWN",
     locale: "en_IN",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "BAKUL LIFT DOWN",
     description:
-      "Is the Bakul Hostel lift down? Crowd-sourced surveillance log.",
+      "Is the Bakul Hostel lift down? A crowd-sourced log.",
   },
 };
 
@@ -78,7 +78,7 @@ const JSON_LD = {
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Web",
   description:
-    "Crowd-sourced surveillance log for the Bakul Hostel lift at IIIT Hyderabad.",
+    "A crowd-sourced log of whether the Bakul Hostel lift at IIIT Hyderabad is working.",
   offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
 };
 

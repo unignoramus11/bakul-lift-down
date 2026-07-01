@@ -132,11 +132,11 @@ export function ReportSheet({
                 {isDown ? "FILE DOWNTIME REPORT" : "FILE RESTORATION"}
               </Dialog.Title>
               <Dialog.Description className="font-tele text-[10px] tracking-[0.1em] text-text-muted">
-                BAKUL HOSTEL · LIFT-01
+                BAKUL HOSTEL LIFT
               </Dialog.Description>
             </div>
             <Badge tone={isDown ? "down" : "restored"} dot>
-              {isDown ? "INCIDENT" : "RESTORE"}
+              {isDown ? "DOWNTIME" : "RESTORE"}
             </Badge>
           </div>
 
@@ -175,7 +175,7 @@ export function ReportSheet({
                     />
                     <Brackets accent={accent} />
                     <span className="absolute left-2 top-2 z-10 rounded-[3px] bg-black/60 px-1.5 py-0.5 font-tele text-[10px] tracking-[0.1em] text-text-2">
-                      REC ● {formatISTTime(stampAt)}
+                      {formatISTTime(stampAt)}
                     </span>
                   </div>
                 ) : null}

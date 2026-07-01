@@ -83,7 +83,7 @@ function liftSvg(floor: number, timeLabel: string, tone: number): string {
   <rect x="${seam - 34}" y="70" width="68" height="40" rx="4" fill="rgba(8,10,14,0.7)" stroke="rgba(180,190,200,0.25)"/>
   <text x="${seam}" y="99" font-family="monospace" font-size="26" fill="rgba(210,220,230,0.85)" text-anchor="middle">${floor}</text>
   <!-- CCTV burn-in -->
-  <text x="16" y="${h - 16}" font-family="monospace" font-size="15" fill="rgba(220,228,236,0.75)">CAM-07  LIFT-01  ${timeLabel}</text>
+  <text x="16" y="${h - 16}" font-family="monospace" font-size="15" fill="rgba(220,228,236,0.75)">BAKUL LIFT  ${timeLabel}</text>
 </svg>`;
 }
 

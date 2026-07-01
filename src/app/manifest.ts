@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "BAKUL LIFT DOWN",
     short_name: "Lift Down",
     description:
-      "Crowd-sourced surveillance log for the Bakul Hostel lift, IIIT Hyderabad.",
+      "A crowd-sourced tracker for whether the Bakul Hostel lift is working.",
     start_url: "/",
     display: "standalone",
     background_color: "#05070A",

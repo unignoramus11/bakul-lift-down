@@ -120,7 +120,7 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* ─── Scrollbars — thin, ops-console ───────────────────────────────────────*/
+/* ─── Scrollbars — thin ───────────────────────────────────────*/
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

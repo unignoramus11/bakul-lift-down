@@ -39,12 +39,12 @@ export function ExportPanel() {
       if (reports.length === 0) {
         notify({
           title: "No reports in range",
-          description: "The digest will show an empty log.",
+          description: "The report will show an empty log.",
           type: "info",
         });
       }
 
-      setStatus("GENERATING DIGEST…");
+      setStatus("GENERATING…");
       const { buildThumbMap } = await import("@/lib/pdf/prepare");
       const [{ pdf }, { ReportPdf }, thumbs] = await Promise.all([
         import("@react-pdf/renderer"),
@@ -67,8 +67,8 @@ export function ExportPanel() {
       a.download = `bakul-lift-down_${from}_to_${to}.pdf`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
-      setStatus("DIGEST DOWNLOADED");
-      notify({ title: "Digest ready", description: "Your PDF has downloaded.", type: "success" });
+      setStatus("REPORT DOWNLOADED");
+      notify({ title: "Report ready", description: "Your PDF has downloaded.", type: "success" });
     } catch (err) {
       console.error(err);
       setStatus("SOMETHING WENT WRONG");
@@ -95,7 +95,7 @@ export function ExportPanel() {
           CALENDAR
         </Link>
         <span className="font-tele text-[10px] tracking-[0.16em] text-text-disabled">
-          EXPORT · OPS
+          EXPORT
         </span>
       </div>
 
@@ -104,7 +104,7 @@ export function ExportPanel() {
           <div className="flex items-center gap-2">
             <Logo size={18} />
             <span className="font-ui text-[15px] font-semibold tracking-[0.12em] text-text">
-              INCIDENT DIGEST
+              DOWNTIME REPORT
             </span>
           </div>
           <Badge tone="info" dot>
@@ -114,8 +114,8 @@ export function ExportPanel() {
 
         <div className="space-y-4 px-4 py-4">
           <p className="font-body text-[13px] leading-snug text-text-muted">
-            Generate a PDF digest of lift downtime over a date range — summary
-            stats, a daily status map, and the full field log.
+            Generate a PDF report of lift downtime over a date range — summary
+            stats, a daily status map, and the full report log.
           </p>
 
           <div className="grid grid-cols-2 gap-3">

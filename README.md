@@ -1,6 +1,6 @@
 # BAKUL LIFT DOWN
 
-Crowd-sourced surveillance log for the Bakul Hostel lift at IIIT Hyderabad — is it down right now?
+Crowd-sourced log for the Bakul Hostel lift at IIIT Hyderabad — is it down right now?
 
 ## Setup
 
@@ -38,4 +38,4 @@ Import the repo, add `DATABASE_URL`, `DIRECT_URL`, and `NEXT_PUBLIC_MAX_IMAGE_KB
 
 ## Stack
 
-Next.js · Prisma + Postgres · Ark UI · Motion · Tailwind v4. Report images are compressed client-side to under 20 KB (`NEXT_PUBLIC_MAX_IMAGE_KB`) and stored inline. PDF digests are generated entirely in the browser.
+Next.js · Prisma + Postgres · Ark UI · Motion · Tailwind v4. Report images are compressed client-side to under 20 KB (`NEXT_PUBLIC_MAX_IMAGE_KB`) and stored inline. PDF reports are generated entirely in the browser.

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ISTClock } from "./ISTClock";
 import { Logo } from "./Logo";
 
-// Slim ops header. Brand + asset on the left, live IST clock on the right.
+// Slim header. Brand on the left, live IST clock on the right.
 // Sticky so the "feed" identity stays put while the calendar scrolls.
 export function StatusStrip() {
   return (
