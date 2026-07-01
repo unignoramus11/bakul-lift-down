@@ -10,7 +10,9 @@ import {
   getMonthSummaries,
   getRangeReports,
 } from "@/lib/queries";
+import { consumeReportAllowance } from "@/lib/ratelimit";
 import type { ReportKind } from "@/lib/reports";
+import { dateKeyIST } from "@/lib/time";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -75,6 +77,7 @@ export async function POST(req: Request) {
     imageMime,
     imageBytes,
     note,
+    deviceId,
   } = (body ?? {}) as Record<string, unknown>;
 
   if (kind !== "DOWN" && kind !== "RESTORED") {
@@ -90,6 +93,18 @@ export async function POST(req: Request) {
   }
   if (typeof note === "string" && note.length > MAX_NOTE_LEN) {
     return bad(`Note must be ${MAX_NOTE_LEN} characters or fewer.`);
+  }
+
+  // Per-device daily cap (all report kinds share the same allowance).
+  const device = typeof deviceId === "string" ? deviceId.slice(0, 128) : "";
+  const limit = await consumeReportAllowance(device, dateKeyIST());
+  if (!limit.ok) {
+    return NextResponse.json(
+      {
+        error: `Daily limit reached — max ${limit.limit} reports per day from this device. Try again tomorrow.`,
+      },
+      { status: 429 },
+    );
   }
 
   const mime =

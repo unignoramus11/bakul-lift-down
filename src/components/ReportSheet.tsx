@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { clsx } from "@/lib/clsx";
 import { MAX_NOTE_LEN } from "@/lib/config";
 import { type CompressResult, compressImage } from "@/lib/compress";
+import { getDeviceId } from "@/lib/device";
 import type { ReportDTO } from "@/lib/reports";
 import { formatISTDate, formatISTTime } from "@/lib/time";
 import { CompressionMeter } from "./CompressionMeter";
@@ -75,6 +76,7 @@ export function ReportSheet({
           imageMime: result.mime,
           imageBytes: result.bytes,
           note: note.trim() || null,
+          deviceId: getDeviceId(),
         }),
       });
       if (!res.ok) {
