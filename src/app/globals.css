@@ -153,6 +153,57 @@ button:disabled,
   cursor: not-allowed;
 }
 
+/* ─── Global press feedback — every interactive element reacts to a tap ─────*/
+/* Kill the default translucent mobile tap flash; we supply our own effect. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Base: a quick, snappy transform so the press settles smoothly. Component-
+   level transitions (e.g. the Button's) win by specificity where they exist. */
+a[href],
+button,
+[role="button"],
+summary {
+  transition: transform 110ms cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+/* Press: a small scale-down snap (never past 1.0 — a snap, not a bounce). */
+a[href]:active,
+button:not(:disabled):active,
+[role="button"]:not([aria-disabled="true"]):active,
+summary:active {
+  transform: scale(0.97);
+}
+
+/* Reduced motion: swap the scale for a brief opacity dip so feedback remains. */
+@media (prefers-reduced-motion: reduce) {
+  a[href]:active,
+  button:not(:disabled):active,
+  [role="button"]:not([aria-disabled="true"]):active,
+  summary:active {
+    transform: none;
+    opacity: 0.7;
+  }
+}
+:root[data-reduce-motion="true"] a[href]:active,
+:root[data-reduce-motion="true"] button:not(:disabled):active,
+:root[data-reduce-motion="true"] [role="button"]:not([aria-disabled="true"]):active,
+:root[data-reduce-motion="true"] summary:active {
+  transform: none;
+  opacity: 0.7;
+}
+
+/* ─── Text selection — amber, high-contrast on the dark theme ───────────────*/
+::selection {
+  background-color: var(--color-warning);
+  color: var(--color-bg);
+}
+::-moz-selection {
+  background-color: var(--color-warning);
+  color: var(--color-bg);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Motion — ambient "alive" layer. Every one has a reduced-motion fallback.
    ═══════════════════════════════════════════════════════════════════════════ */
