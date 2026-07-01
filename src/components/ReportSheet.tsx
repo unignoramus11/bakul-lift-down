@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog } from "@ark-ui/react/dialog";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { clsx } from "@/lib/clsx";
 import { MAX_NOTE_LEN } from "@/lib/config";
 import { type CompressResult, compressImage } from "@/lib/compress";
@@ -39,17 +39,8 @@ export function ReportSheet({
   const [stampAt, setStampAt] = useState<Date>(() => new Date());
   const [error, setError] = useState<string | null>(null);
 
-  // Reset everything each time the sheet opens.
-  useEffect(() => {
-    if (open) {
-      setStep("pick");
-      setPreview(null);
-      setPercent(0);
-      setResult(null);
-      setNote("");
-      setError(null);
-    }
-  }, [open]);
+  // State resets on open because the parent remounts this component with a
+  // fresh key each time it's opened — no reset effect needed.
 
   async function handleFile(file: File) {
     setStep("compressing");

@@ -44,43 +44,44 @@ export function SlotReveal({
     router.prefetch(fallbackHref);
   }, [router, fallbackHref]);
 
-  // Transform that maps the view's current box onto the slot rect.
-  const slotTransform = useCallback((): string | null => {
+  // Delta that maps the view's current box onto the slot rect, as separate
+  // transform components so Motion interpolates them smoothly (and we never
+  // mutate the element's style directly).
+  const slotDelta = useCallback(():
+    | { x: number; y: number; scaleX: number; scaleY: number }
+    | null => {
     const rect = getSlotOrigin();
     const el = scope.current as HTMLElement | null;
     if (!rect || !el) return null;
     const final = el.getBoundingClientRect();
     if (final.width === 0 || final.height === 0) return null;
-    const sx = rect.width / final.width;
-    const sy = rect.height / final.height;
-    const dx = rect.left + rect.width / 2 - (final.left + final.width / 2);
-    const dy = rect.top + rect.height / 2 - (final.top + final.height / 2);
-    return `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`;
+    return {
+      x: rect.left + rect.width / 2 - (final.left + final.width / 2),
+      y: rect.top + rect.height / 2 - (final.top + final.height / 2),
+      scaleX: rect.width / final.width,
+      scaleY: rect.height / final.height,
+    };
   }, [scope]);
 
   useLayoutEffect(() => {
     const el = scope.current as HTMLElement | null;
-    if (!el) return;
-    if (reduced) {
-      el.style.opacity = "1";
-      return;
-    }
-    const t = slotTransform();
-    if (!t) {
+    if (!el || reduced) return; // element defaults to visible when not animated
+    const d = slotDelta();
+    if (!d) {
       animate(el, { opacity: [0, 1] }, { duration: 0.18 });
       return;
     }
-    el.style.transformOrigin = "center center";
-    el.style.willChange = "transform, opacity";
-    el.style.transform = t;
-    el.style.opacity = "0.35";
     animate(
       el,
-      { transform: "translate(0px, 0px) scale(1, 1)", opacity: 1 },
+      {
+        x: [d.x, 0],
+        y: [d.y, 0],
+        scaleX: [d.scaleX, 1],
+        scaleY: [d.scaleY, 1],
+        opacity: [0.35, 1],
+      },
       { duration: 0.36, ease: EASE_OUT },
-    ).then(() => {
-      el.style.willChange = "auto";
-    });
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -98,15 +99,17 @@ export function SlotReveal({
     startTransition(() => router.replace(fallbackHref));
 
     if (reduced || !el) return;
-    const t = slotTransform();
-    if (!t) {
+    const d = slotDelta();
+    if (!d) {
       animate(el, { opacity: 0 }, { duration: 0.16 });
       return;
     }
-    el.style.transformOrigin = "center center";
-    el.style.willChange = "transform, opacity";
-    animate(el, { transform: t, opacity: 0.15 }, { duration: 0.3, ease: EASE_IN });
-  }, [animate, fallbackHref, reduced, router, scope, slotTransform]);
+    animate(
+      el,
+      { x: d.x, y: d.y, scaleX: d.scaleX, scaleY: d.scaleY, opacity: 0.15 },
+      { duration: 0.3, ease: EASE_IN },
+    );
+  }, [animate, fallbackHref, reduced, router, scope, slotDelta]);
 
   return (
     <CloseCtx.Provider value={close}>

@@ -29,70 +29,61 @@ export function MonthSwitcher({
   const { reduced } = useMotionPrefs();
   const [{ year, month }, setYM] = useState(initialMonth);
   const [direction, setDirection] = useState(0);
-  const [loading, setLoading] = useState(false);
-  // Bumped whenever the cache changes, to trigger a re-render.
-  const [, forceRender] = useState(0);
-  const bump = useCallback(() => forceRender((v) => v + 1), []);
+  // null → the visible month's data isn't ready yet (show skeleton).
+  const [days, setDays] = useState<DaySummary[] | null>(initialDays);
 
-  // Cache seeded synchronously so the initial month renders real data on the
-  // very first paint (no skeleton flash).
-  const cacheRef = useRef<Map<string, DaySummary[]> | null>(null);
-  if (cacheRef.current === null) {
-    cacheRef.current = new Map([
-      [keyOf(initialMonth.year, initialMonth.month), initialDays],
-    ]);
-  }
-  const cache = cacheRef.current;
+  // Month cache kept in state so it's a stable value we can read/mutate without
+  // touching a ref during render. Seeded with the server-provided month so the
+  // first paint shows real data.
+  const [cache] = useState(
+    () =>
+      new Map<string, DaySummary[]>([
+        [keyOf(initialMonth.year, initialMonth.month), initialDays],
+      ]),
+  );
 
   const current = currentMonthIST();
   const atCurrent = year === current.year && month === current.month;
-
-  // Displayed data is derived from the cache at render time — so switching to
-  // an uncached month yields a skeleton immediately, with no frame of the
-  // previous month.
-  const key = keyOf(year, month);
-  const days = cache.get(key) ?? null;
+  const loading = days === null;
 
   // A bumped refreshSignal invalidates the visible month so a freshly filed
   // report shows up without a full page reload.
   const lastSignal = useRef(refreshSignal);
 
-  // Fetch when the month has no cached data, or when a refresh was requested.
+  // Fetch when the visible month isn't cached, or a refresh was requested. The
+  // skeleton/stale-data decision is made synchronously in `go` (and on refresh
+  // we keep stale data visible), so this effect only performs the async fetch.
   useEffect(() => {
     const k = keyOf(year, month);
     const refreshed = refreshSignal !== lastSignal.current;
     if (refreshed) lastSignal.current = refreshSignal;
-
-    // Nothing to do if it's cached and not a forced refresh. (On refresh we
-    // keep the stale data visible and refetch in place — no skeleton flash.)
-    if (cache.has(k) && !refreshed) {
-      setLoading(false);
-      return;
-    }
+    if (cache.has(k) && !refreshed) return;
 
     let alive = true;
-    setLoading(true);
     fetch(`/api/reports?month=${k}`)
       .then((r) => r.json())
       .then((json: { days: DaySummary[] }) => {
         if (!alive) return;
         cache.set(k, json.days);
-        bump();
+        setDays(json.days);
       })
-      .catch(() => {})
-      .finally(() => alive && setLoading(false));
+      .catch(() => {});
     return () => {
       alive = false;
     };
-  }, [year, month, refreshSignal, cache, bump]);
+  }, [year, month, refreshSignal, cache]);
 
   const go = useCallback(
     (delta: number) => {
       if (delta > 0 && atCurrent) return; // never scroll into the future
+      const next = shiftMonth(year, month, delta);
       setDirection(delta);
-      setYM((s) => shiftMonth(s.year, s.month, delta));
+      setYM(next);
+      // Show cached data immediately, or a skeleton until the fetch lands —
+      // never a frame of the previous month.
+      setDays(cache.get(keyOf(next.year, next.month)) ?? null);
     },
-    [atCurrent],
+    [year, month, atCurrent, cache],
   );
 
   const variants = {

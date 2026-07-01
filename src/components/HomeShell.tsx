@@ -26,6 +26,8 @@ export function HomeShell({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("DOWN");
   const [refreshSignal, setRefreshSignal] = useState(0);
+  // Bumped each open so the report sheet remounts fresh (state reset via key).
+  const [sheetSession, setSheetSession] = useState(0);
 
   // Keep the hero live — poll today's status.
   useEffect(() => {
@@ -46,6 +48,7 @@ export function HomeShell({
   }, []);
 
   const openReport = useCallback((m: Mode) => {
+    setSheetSession((n) => n + 1);
     setMode(m);
     setSheetOpen(true);
   }, []);
@@ -101,6 +104,7 @@ export function HomeShell({
       />
 
       <ReportSheet
+        key={sheetSession}
         open={sheetOpen}
         mode={mode}
         onOpenChange={setSheetOpen}
