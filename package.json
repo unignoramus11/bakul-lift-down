@@ -10,6 +10,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx scripts/seed.ts",
+    "db:clear": "tsx scripts/clear.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {

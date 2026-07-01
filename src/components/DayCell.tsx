@@ -52,7 +52,8 @@ export function DayCell({
         status={summary.status}
         photo={summary.thumb}
         size="sm"
-        animate={animate && !isEmpty}
+        // Only today's stamp "lands" with animation; other days appear settled.
+        animate={animate && !!today && !isEmpty}
         rotation={seededRotation(summary.dateKey)}
         alt={`Lift on ${summary.dateKey}`}
       />
