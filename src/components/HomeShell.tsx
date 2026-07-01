@@ -76,7 +76,7 @@ export function HomeShell({
 
   return (
     <>
-      <main className="mx-auto w-full max-w-5xl flex-1 space-y-3 px-4 py-3 pb-28">
+      <main className="mx-auto w-full max-w-5xl flex-1 space-y-3 px-4 py-4">
         <LiftStatusHero live={live} />
         <MonthSwitcher
           initialMonth={initialMonth}

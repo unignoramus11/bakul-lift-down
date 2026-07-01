@@ -50,13 +50,6 @@ export function ImageViewerProvider({ children }: { children: React.ReactNode })
             }}
           >
             <Dialog.Title className="sr-only">Photo</Dialog.Title>
-            {/* close */}
-            <Dialog.CloseTrigger
-              className="absolute right-1 top-1 z-10 grid size-9 place-items-center rounded-[6px] border border-border bg-black/60 font-tele text-[16px] leading-none text-text-2 hover:border-text-muted"
-              aria-label="Close photo"
-            >
-              ×
-            </Dialog.CloseTrigger>
 
             {view ? (
               <figure className="relative flex min-h-0 flex-col">
@@ -72,6 +65,13 @@ export function ImageViewerProvider({ children }: { children: React.ReactNode })
                     alt={view.caption ?? "Lift photo"}
                     className="max-h-[82vh] max-w-[92vw] object-contain"
                   />
+                  {/* Close — inset equally from the image's top-right corner. */}
+                  <Dialog.CloseTrigger
+                    className="absolute right-2 top-2 z-10 grid size-9 place-items-center rounded-[6px] border border-border bg-black/60 font-tele text-[16px] leading-none text-text-2 hover:border-text-muted"
+                    aria-label="Close photo"
+                  >
+                    ×
+                  </Dialog.CloseTrigger>
                 </div>
                 {view.caption ? (
                   <figcaption className="mt-2 text-center font-tele text-[11px] tracking-[0.1em] text-text-muted">
