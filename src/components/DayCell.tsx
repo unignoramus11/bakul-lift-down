@@ -41,8 +41,8 @@ export function DayCell({
         summary.reportCount === 1 ? "" : "s"
       }`}
       className={clsx(
-        "group relative block aspect-square min-h-[44px] overflow-hidden rounded-[6px] border",
-        "transition-[border-color] duration-[120ms]",
+        "group relative block aspect-square min-h-11 overflow-hidden rounded-md border",
+        "transition-[border-color] duration-120",
         today
           ? "border-border-active breathe z-10"
           : "border-border hover:border-text-muted",

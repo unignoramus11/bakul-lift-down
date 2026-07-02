@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { DaySummary, LiveStatus, ReportDTO } from "@/lib/reports";
+import { setSlotOrigin } from "@/lib/slotOrigin";
 import { formatISTTime } from "@/lib/time";
 import { LiftStatusHero } from "./LiftStatusHero";
 import { MonthSwitcher } from "./MonthSwitcher";
@@ -86,13 +87,17 @@ export function HomeShell({
 
         <Link
           href="/export"
-          className="flex min-h-[48px] items-center justify-center gap-2 rounded-[6px] border border-border bg-panel font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-text-2 transition-colors duration-[120ms] hover:border-text-muted hover:bg-panel-2"
+          onClick={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            setSlotOrigin({ left: r.left, top: r.top, width: r.width, height: r.height });
+          }}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-md border border-border bg-panel font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-text-2 transition-colors duration-120 hover:border-text-muted hover:bg-panel-2"
         >
           <Logo size={16} accent={false} />
           Generate PDF Report
         </Link>
 
-        <p className="px-1 pt-1 text-center font-tele text-[10px] tracking-[0.1em] text-text-disabled">
+        <p className="px-1 pt-1 text-center font-tele text-[10px] tracking-widest text-text-disabled">
           CROWD-SOURCED · TAP ANY DAY FOR THE LOG
         </p>
       </main>

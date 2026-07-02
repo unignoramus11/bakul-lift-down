@@ -330,7 +330,7 @@ export function ReportPdf({
                           <Text style={s.entryId}>
                             REPORT #{String(i + 1).padStart(2, "0")}
                           </Text>
-                          <Text style={s.entryTime}>{istHM(new Date(r.createdAt))} IST</Text>
+                          <Text style={s.entryTime}>{istHM(new Date(r.createdAt))}</Text>
                         </View>
                         <Text style={[s.badge, { color: col2, borderColor: col2, alignSelf: "flex-start", marginTop: 3 }]}>
                           {down ? "DOWN - REPORTED" : "RESTORED"}

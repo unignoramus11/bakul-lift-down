@@ -34,9 +34,9 @@ export function Button({
     <button
       {...rest}
       className={clsx(
-        "inline-flex min-h-[48px] items-center justify-center gap-2 rounded-[6px] border px-4",
+        "inline-flex min-h-12 items-center justify-center gap-2 rounded-md border px-4",
         "font-ui text-[13px] font-semibold uppercase tracking-[0.14em]",
-        "transition-[transform,background-color,border-color] duration-[120ms]",
+        "transition-[transform,background-color,border-color] duration-120",
         "active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none",
         VARIANTS[variant],
         full && "w-full",

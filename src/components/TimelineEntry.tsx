@@ -50,7 +50,7 @@ export function TimelineEntry({
       </div>
 
       {/* module */}
-      <div className="mb-3 flex-1 overflow-hidden rounded-[var(--radius)] border border-border bg-panel">
+      <div className="mb-3 flex-1 overflow-hidden rounded-(--radius) border border-border bg-panel">
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
           <span className="font-tele text-[12px] tracking-[0.12em] text-text-2">
             REPORT #{String(ordinal).padStart(2, "0")}
@@ -70,7 +70,7 @@ export function TimelineEntry({
               )
             }
             aria-label="View full photo"
-            className="relative aspect-square w-24 shrink-0 cursor-zoom-in overflow-hidden rounded-[6px] border border-border"
+            className="relative aspect-square w-24 shrink-0 cursor-zoom-in overflow-hidden rounded-md border border-border"
           >
             <Stamp
               status={down ? "DOWN" : "RESTORED"}

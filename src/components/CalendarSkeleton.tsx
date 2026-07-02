@@ -20,7 +20,7 @@ export function CalendarSkeleton({
         {WEEKDAYS.map((d, i) => (
           <div
             key={i}
-            className="text-center font-tele text-[11px] tracking-[0.1em] text-text-muted"
+            className="text-center font-tele text-[11px] tracking-widest text-text-muted"
           >
             {d}
           </div>
@@ -33,7 +33,7 @@ export function CalendarSkeleton({
         {keys.map((k) => (
           <div
             key={k}
-            className="aspect-square min-h-[44px] animate-pulse rounded-[6px] border border-border bg-border-muted/50 motion-reduce:animate-none"
+            className="aspect-square min-h-11 animate-pulse rounded-md border border-border bg-border-muted/50 motion-reduce:animate-none"
           />
         ))}
       </div>

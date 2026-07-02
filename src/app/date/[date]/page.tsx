@@ -66,8 +66,8 @@ export default async function DateDetail({
         </div>
 
         {/* case-file header */}
-        <section className="mb-4 overflow-hidden rounded-[var(--radius)] border border-border bg-panel">
-          <div className="relative aspect-[16/7] w-full bg-black">
+        <section className="mb-4 overflow-hidden rounded-(--radius) border border-border bg-panel">
+          <div className="relative aspect-16/7 w-full bg-black">
             {status === "EMPTY" ? (
               <div className="grid size-full place-items-center font-tele text-[12px] tracking-[0.12em] text-text-disabled">
                 NO DATA — DATE NOT YET REACHED
@@ -83,7 +83,7 @@ export default async function DateDetail({
                 />
               </PhotoZoom>
             )}
-            <span className="absolute left-2 top-2 z-10 rounded-[3px] bg-black/60 px-1.5 py-0.5 font-tele text-[10px] tracking-[0.1em] text-text-2">
+            <span className="absolute left-2 top-2 z-10 rounded-[3px] bg-black/60 px-1.5 py-0.5 font-tele text-[10px] tracking-widest text-text-2">
               {formatDateKey(date)}
             </span>
           </div>
@@ -113,12 +113,12 @@ export default async function DateDetail({
 
         {/* timeline */}
         {total === 0 ? (
-          <div className="rounded-[var(--radius)] border border-border bg-panel px-4 py-10 text-center font-body text-[14px] text-text-muted">
+          <div className="rounded-(--radius) border border-border bg-panel px-4 py-10 text-center font-body text-[14px] text-text-muted">
             No reports filed for this date.
           </div>
         ) : (
           <>
-            <div className="mb-2 flex items-center gap-2 font-tele text-[11px] tracking-[0.14em] text-text-muted">
+            <div className="mb-4 ml-2 flex items-center gap-2 font-tele text-[11px] tracking-[0.14em] text-text-muted">
               <span className="size-1.5 rounded-full bg-danger rec-dot" />
               TIMELINE · NEWEST FIRST
             </div>

@@ -18,8 +18,8 @@ export function CompressionMeter({
     tone === "down" ? "var(--color-stamp-down)" : "var(--color-stamp-restored)";
 
   return (
-    <div className="rounded-[6px] border border-border bg-bg-2 p-3">
-      <div className="mb-2 flex items-center justify-between font-tele text-[11px] tracking-[0.1em] text-text-muted">
+    <div className="rounded-md border border-border bg-bg-2 p-3">
+      <div className="mb-2 flex items-center justify-between font-tele text-[11px] tracking-widest text-text-muted">
         <span>{done ? "PHOTO READY" : "PROCESSING PHOTO…"}</span>
         {done ? <span style={{ color: accent }}>OK</span> : null}
       </div>

@@ -66,13 +66,13 @@ export function formatISTDate(date: Date): string {
   return `${pad(day)} ${MONTHS[month - 1]} ${year}`;
 }
 
-/** "04:12:08 IST" (seconds optional) */
+/** "04:12:08" (seconds optional). Timezone is IST everywhere and left implicit
+ *  in the UI; the PDF states it once in its footer. */
 export function formatISTTime(date: Date, withSeconds = true): string {
   const { hour, minute, second } = istParts(date);
-  const core = withSeconds
+  return withSeconds
     ? `${pad(hour)}:${pad(minute)}:${pad(second)}`
     : `${pad(hour)}:${pad(minute)}`;
-  return `${core} IST`;
 }
 
 /** "04:12" — no unit, for compact readouts. */

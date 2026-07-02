@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ExportPanel } from "@/components/ExportPanel";
+import { SlotReveal } from "@/components/SlotReveal";
 import { StatusStrip } from "@/components/StatusStrip";
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function ExportPage() {
   return (
     <>
       <StatusStrip />
-      <ExportPanel />
+      <SlotReveal fallbackHref="/">
+        <ExportPanel />
+      </SlotReveal>
     </>
   );
 }

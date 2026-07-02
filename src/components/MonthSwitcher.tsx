@@ -93,13 +93,13 @@ export function MonthSwitcher({
   };
 
   return (
-    <section className="rounded-[var(--radius)] border border-border bg-panel">
+    <section className="rounded-(--radius) border border-border bg-panel">
       {/* header / controls */}
       <header className="flex items-center justify-between border-b border-border px-3 py-2.5">
         <button
           type="button"
           onClick={() => go(-1)}
-          className="grid size-9 place-items-center rounded-[6px] border border-border text-text-2 transition-colors duration-[120ms] hover:border-text-muted active:bg-panel-2"
+          className="grid size-9 place-items-center rounded-md border border-border text-text-2 transition-colors duration-120 hover:border-text-muted active:bg-panel-2"
           aria-label="Previous month"
         >
           <Chevron dir="left" />
@@ -118,7 +118,7 @@ export function MonthSwitcher({
           type="button"
           onClick={() => go(1)}
           disabled={atCurrent}
-          className="grid size-9 place-items-center rounded-[6px] border border-border text-text-2 transition-colors duration-[120ms] enabled:hover:border-text-muted enabled:active:bg-panel-2 disabled:text-text-disabled disabled:opacity-40"
+          className="grid size-9 place-items-center rounded-md border border-border text-text-2 transition-colors duration-120 enabled:hover:border-text-muted enabled:active:bg-panel-2 disabled:text-text-disabled disabled:opacity-40"
           aria-label="Next month"
         >
           <Chevron dir="right" />

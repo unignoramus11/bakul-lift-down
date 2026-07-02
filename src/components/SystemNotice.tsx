@@ -41,13 +41,13 @@ export function SystemNotices() {
   return (
     <Toaster
       toaster={systemToaster}
-      className="z-[60] w-[min(92vw,360px)]"
+      className="z-60 w-[min(92vw,360px)]"
       style={{ top: "max(1rem, env(safe-area-inset-top))" }}
     >
       {(toast) => (
         <Toast.Root
           className={clsx(
-            "flex items-start gap-2.5 rounded-[6px] border bg-panel-2 px-3 py-2.5",
+            "flex items-start gap-2.5 rounded-md border bg-panel-2 px-3 py-2.5",
             "data-[state=open]:animate-[entry-rise_180ms_ease-out]",
             TONE[toast.type ?? "info"] ?? TONE.info,
           )}

@@ -31,12 +31,12 @@ export function ImageViewerProvider({ children }: { children: React.ReactNode })
         <Dialog.Backdrop
           data-backdrop
           className={clsx(
-            "fixed inset-0 z-[70] bg-black/90",
+            "fixed inset-0 z-70 bg-black/90",
             "data-[state=open]:animate-[backdrop-in_200ms_ease-out]",
             "data-[state=closed]:animate-[backdrop-out_160ms_ease-in]",
           )}
         />
-        <Dialog.Positioner className="fixed inset-0 z-[71] flex items-center justify-center p-4">
+        <Dialog.Positioner className="fixed inset-0 z-71 flex items-center justify-center p-4">
           <Dialog.Content
             data-sheet
             className={clsx(
@@ -67,14 +67,14 @@ export function ImageViewerProvider({ children }: { children: React.ReactNode })
                   />
                   {/* Close — inset equally from the image's top-right corner. */}
                   <Dialog.CloseTrigger
-                    className="absolute right-2 top-2 z-10 grid size-9 place-items-center rounded-[6px] border border-border bg-black/60 font-tele text-[16px] leading-none text-text-2 hover:border-text-muted"
+                    className="absolute right-2 top-2 z-10 grid size-9 place-items-center rounded-md border border-border bg-black/60 font-tele text-[16px] leading-none text-text-2 hover:border-text-muted"
                     aria-label="Close photo"
                   >
                     ×
                   </Dialog.CloseTrigger>
                 </div>
                 {view.caption ? (
-                  <figcaption className="mt-2 text-center font-tele text-[11px] tracking-[0.1em] text-text-muted">
+                  <figcaption className="mt-2 text-center font-tele text-[11px] tracking-widest text-text-muted">
                     {view.caption}
                   </figcaption>
                 ) : null}

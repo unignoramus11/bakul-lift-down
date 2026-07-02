@@ -27,7 +27,7 @@ export function Panel({
   return (
     <Tag
       className={clsx(
-        "rounded-[var(--radius)] border",
+        "rounded-(--radius) border",
         elevated ? "bg-panel-2" : "bg-panel",
         "border-border",
         className,

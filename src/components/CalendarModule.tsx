@@ -24,7 +24,7 @@ export function CalendarModule({
         {WEEKDAYS.map((d, i) => (
           <div
             key={i}
-            className="text-center font-tele text-[11px] tracking-[0.1em] text-text-muted"
+            className="text-center font-tele text-[11px] tracking-widest text-text-muted"
           >
             {d}
           </div>

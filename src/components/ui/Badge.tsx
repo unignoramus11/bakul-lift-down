@@ -30,7 +30,7 @@ export function Badge({
   return (
     <span
       className={clsx(
-        "inline-flex items-center gap-1.5 rounded-[4px] border px-1.5 py-0.5",
+        "inline-flex items-center gap-1.5 rounded-sm border px-1.5 py-0.5",
         "font-tele text-[11px] font-medium tracking-[0.16em] uppercase leading-none",
         TONES[tone],
         pulse && "pulse-slow",

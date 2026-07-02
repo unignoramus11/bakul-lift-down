@@ -151,7 +151,7 @@ function StampMark({
       {/* one-frame halo flash on landing */}
       {shouldAnimate ? (
         <motion.span
-          className="absolute rounded-[4px]"
+          className="absolute rounded-sm"
           style={{ background: halo, inset: "18%" }}
           initial={{ opacity: 0.9, scale: 1.1 }}
           animate={{ opacity: 0, scale: 1 }}

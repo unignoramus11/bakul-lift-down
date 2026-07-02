@@ -114,8 +114,8 @@ export function ReportSheet({
           data-sheet
           className={clsx(
             "flex max-h-[92vh] w-full flex-col overflow-hidden border-t border-border bg-bg",
-            "tablet:h-full tablet:max-h-none tablet:w-[420px] tablet:border-l tablet:border-t-0",
-            "rounded-t-[12px] tablet:rounded-none",
+            "tablet:h-full tablet:max-h-none tablet:w-105 tablet:border-l tablet:border-t-0",
+            "rounded-t-xl tablet:rounded-none",
             // mobile: slide up from bottom
             "data-[state=open]:animate-[sheet-in-y_250ms_cubic-bezier(0.2,0.9,0.25,1)]",
             "data-[state=closed]:animate-[sheet-out-y_250ms_cubic-bezier(0.2,0.9,0.25,1)]",
@@ -131,7 +131,7 @@ export function ReportSheet({
               <Dialog.Title className="font-ui text-[15px] font-semibold tracking-[0.12em] text-text">
                 {isDown ? "FILE DOWNTIME REPORT" : "FILE RESTORATION"}
               </Dialog.Title>
-              <Dialog.Description className="font-tele text-[10px] tracking-[0.1em] text-text-muted">
+              <Dialog.Description className="font-tele text-[10px] tracking-widest text-text-muted">
                 BAKUL HOSTEL LIFT
               </Dialog.Description>
             </div>
@@ -165,7 +165,7 @@ export function ReportSheet({
                     role="button"
                     tabIndex={0}
                     onClick={() => preview && openImage(preview, "SELECTED PHOTO")}
-                    className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-[6px] border border-border bg-black"
+                    className="relative aspect-4/3 w-full cursor-zoom-in overflow-hidden rounded-md border border-border bg-black"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -174,7 +174,7 @@ export function ReportSheet({
                       className="photo-desat grain size-full object-cover"
                     />
                     <Brackets accent={accent} />
-                    <span className="absolute left-2 top-2 z-10 rounded-[3px] bg-black/60 px-1.5 py-0.5 font-tele text-[10px] tracking-[0.1em] text-text-2">
+                    <span className="absolute left-2 top-2 z-10 rounded-[3px] bg-black/60 px-1.5 py-0.5 font-tele text-[10px] tracking-widest text-text-2">
                       {formatISTTime(stampAt)}
                     </span>
                   </div>
@@ -192,7 +192,7 @@ export function ReportSheet({
                   <>
                     {/* note */}
                     <label className="block">
-                      <span className="mb-1.5 block font-ui text-[12px] font-medium tracking-[0.1em] text-text-2 uppercase">
+                      <span className="mb-1.5 block font-ui text-[12px] font-medium tracking-widest text-text-2 uppercase">
                         Field note{" "}
                         <span className="text-text-disabled">— optional</span>
                       </span>
@@ -207,7 +207,7 @@ export function ReportSheet({
                             ? "e.g. stuck between 2 and 3, doors won't open"
                             : "e.g. back online, tested up and down"
                         }
-                        className="w-full resize-none rounded-[6px] border border-border bg-bg-2 px-3 py-2 font-body text-[14px] text-text placeholder:text-text-disabled focus:border-border-active focus:outline-none"
+                        className="w-full resize-none rounded-md border border-border bg-bg-2 px-3 py-2 font-body text-[14px] text-text placeholder:text-text-disabled focus:border-border-active focus:outline-none"
                       />
                       <span className="mt-1 block text-right font-tele text-[10px] text-text-muted">
                         {note.length}/{MAX_NOTE_LEN}
@@ -215,7 +215,7 @@ export function ReportSheet({
                     </label>
 
                     {/* auto-filled metadata — the confirmation */}
-                    <dl className="rounded-[6px] border border-border bg-panel px-3 py-2.5 font-tele text-[12px]">
+                    <dl className="rounded-md border border-border bg-panel px-3 py-2.5 font-tele text-[12px]">
                       <Meta k="TIME" v={formatISTTime(stampAt)} />
                       <Meta k="DATE" v={formatISTDate(stampAt)} />
                       <Meta
@@ -226,7 +226,7 @@ export function ReportSheet({
                     </dl>
 
                     {step === "error" && error ? (
-                      <p className="rounded-[6px] border border-border-alert bg-danger/10 px-3 py-2 font-body text-[13px] text-danger">
+                      <p className="rounded-md border border-border-alert bg-danger/10 px-3 py-2 font-body text-[13px] text-danger">
                         {error}
                       </p>
                     ) : null}
@@ -261,7 +261,7 @@ export function ReportSheet({
                   variant={isDown ? "danger" : "success"}
                   onClick={submit}
                   disabled={step === "submitting" || !result}
-                  className="flex-[2]"
+                  className="flex-2"
                 >
                   {step === "submitting"
                     ? "Filing…"
@@ -289,7 +289,7 @@ function PickTarget({
     <button
       type="button"
       onClick={onPick}
-      className="group relative flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-[8px] border border-dashed border-border bg-bg-2 transition-colors duration-150 hover:border-text-muted"
+      className="group relative flex aspect-4/3 w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-bg-2 transition-colors duration-150 hover:border-text-muted"
     >
       <Brackets accent={accent} />
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -328,7 +328,7 @@ function Brackets({ accent }: { accent: string }) {
 function Meta({ k, v, accent }: { k: string; v: string; accent?: string }) {
   return (
     <div className="flex items-center justify-between py-0.5">
-      <dt className="tracking-[0.1em] text-text-muted">{k}</dt>
+      <dt className="tracking-widest text-text-muted">{k}</dt>
       <dd style={accent ? { color: accent } : undefined} className="text-text-2">
         {v}
       </dd>

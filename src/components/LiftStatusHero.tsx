@@ -15,18 +15,18 @@ export function LiftStatusHero({ live }: { live: LiveStatus }) {
   const subline =
     status === "DOWN"
       ? sinceHM
-        ? `REPORTED DOWN AS OF ${sinceHM} IST`
+        ? `REPORTED DOWN AS OF ${sinceHM}`
         : "REPORTED DOWN"
       : status === "RESTORED"
         ? sinceHM
-          ? `RESTORED · BACK ONLINE ${sinceHM} IST`
+          ? `RESTORED · BACK ONLINE ${sinceHM}`
           : "RESTORED · BACK ONLINE"
         : "NO DOWNTIME REPORTED TODAY";
 
   return (
     <section
       className={clsx(
-        "rounded-[var(--radius)] border bg-panel",
+        "rounded-(--radius) border bg-panel",
         down ? "border-border-alert" : "border-border",
       )}
     >

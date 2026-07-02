@@ -194,6 +194,62 @@ summary:active {
   opacity: 0.7;
 }
 
+/* ─── Range date picker cells (Ark DatePicker) ─────────────────────────────*/
+/* Layout + state in one place so the cascade order is predictable: in-range
+   (light bar) sits under the endpoints (solid), disabled overrides all. */
+.dp-cell {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text-2);
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+.dp-cell:hover {
+  background-color: var(--color-panel);
+}
+.dp-cell[data-in-range] {
+  border-radius: 0;
+  background-color: color-mix(in srgb, var(--color-action) 20%, transparent);
+  color: var(--color-info);
+}
+/* Preview of the range while hovering the second endpoint. */
+.dp-cell[data-in-hover-range] {
+  border-radius: 0;
+  background-color: color-mix(in srgb, var(--color-action) 12%, transparent);
+}
+.dp-cell[data-today] {
+  box-shadow: inset 0 0 0 1px var(--color-border-active);
+}
+.dp-cell[data-range-start],
+.dp-cell[data-range-end],
+.dp-cell[data-selected] {
+  background-color: var(--color-action);
+  color: #fff;
+}
+.dp-cell[data-range-start] {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.dp-cell[data-range-end] {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.dp-cell[data-outside-range] {
+  color: var(--color-text-disabled);
+}
+.dp-cell[data-disabled] {
+  pointer-events: none;
+  opacity: 0.28;
+  background-color: transparent;
+  box-shadow: none;
+}
+
 /* ─── Text selection — amber, high-contrast on the dark theme ───────────────*/
 ::selection {
   background-color: var(--color-warning);
@@ -302,7 +358,7 @@ summary:active {
   }
 }
 
-/* Photo lightbox: settle in from a hair smaller. */
+/* Photo lightbox / popover: settle in from a hair smaller, and back out. */
 @keyframes viewer-in {
   from {
     opacity: 0;
@@ -311,6 +367,16 @@ summary:active {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+@keyframes viewer-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
   }
 }
 
