@@ -11,7 +11,7 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
-import { getSlotOrigin } from "@/lib/slotOrigin";
+import { consumeSkeletonOpened, getSlotOrigin } from "@/lib/slotOrigin";
 import { useMotionPrefs } from "./MotionPrefsProvider";
 
 // Wraps the date view and animates it expanding from the tapped calendar cell
@@ -66,11 +66,17 @@ export function SlotReveal({
   useLayoutEffect(() => {
     const el = scope.current as HTMLElement | null;
     if (!el || reduced) return; // element defaults to visible when not animated
+
+    // If a loading skeleton already grew from the tapped cell, the content just
+    // takes its place — re-animating would look like a shrink-then-grow.
+    if (consumeSkeletonOpened()) return;
+
     const d = slotDelta();
     if (!d) {
       animate(el, { opacity: [0, 1] }, { duration: 0.18 });
       return;
     }
+    // Grow from the tapped cell (fast/prefetched load — no skeleton shown).
     animate(
       el,
       {
@@ -90,25 +96,28 @@ export function SlotReveal({
     closing.current = true;
     const el = scope.current as HTMLElement | null;
 
-    // Kick the navigation up front so home's DB query runs *during* the
-    // collapse animation, not after it — otherwise the last animation frame
-    // freezes on screen until the fetch resolves. Always return to this date's
-    // month explicitly: the calendar switches months as client state (swiping)
-    // without touching the URL, so a plain history pop would land on whatever
-    // month home first rendered, not the one the tapped cell lived in.
-    startTransition(() => router.replace(fallbackHref));
+    // Always return to this date's month explicitly: the calendar switches
+    // months as client state (swiping) without touching the URL, so a plain
+    // history pop would land on whatever month home first rendered.
+    const done = () => startTransition(() => router.replace(fallbackHref));
 
-    if (reduced || !el) return;
+    // Play the collapse-into-the-cell fully, THEN navigate. (Navigating up
+    // front would let a prefetched home commit and unmount this view before the
+    // animation is seen; home's loading skeleton covers any load delay now.)
+    if (reduced || !el) {
+      done();
+      return;
+    }
     const d = slotDelta();
     if (!d) {
-      animate(el, { opacity: 0 }, { duration: 0.16 });
+      animate(el, { opacity: 0 }, { duration: 0.16 }).then(done);
       return;
     }
     animate(
       el,
       { x: d.x, y: d.y, scaleX: d.scaleX, scaleY: d.scaleY, opacity: 0.15 },
       { duration: 0.3, ease: EASE_IN },
-    );
+    ).then(done);
   }, [animate, fallbackHref, reduced, router, scope, slotDelta]);
 
   return (

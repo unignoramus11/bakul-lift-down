@@ -79,6 +79,29 @@ export async function getDayReports(dateKey: string): Promise<ReportDTO[]> {
   return rows.map(toDTO);
 }
 
+/** All reports in one IST month, newest first (admin panel, paged by month). */
+export async function getMonthReports(
+  year: number,
+  month1: number,
+): Promise<ReportDTO[]> {
+  const prefix = `${year}-${String(month1).padStart(2, "0")}`;
+  const rows = (await prisma.report.findMany({
+    where: { dateKey: { startsWith: prefix } },
+    orderBy: { createdAt: "desc" },
+  })) as Row[];
+  return rows.map(toDTO);
+}
+
+/** Delete a single report by id. Returns true if a row was removed. */
+export async function deleteReport(id: string): Promise<boolean> {
+  try {
+    await prisma.report.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Today's live status for the hero. */
 export async function getTodayLive(): Promise<LiveStatus> {
   const today = dateKeyIST();

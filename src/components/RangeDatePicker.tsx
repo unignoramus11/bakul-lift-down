@@ -4,7 +4,7 @@ import { DatePicker } from "@ark-ui/react/date-picker";
 import { Portal } from "@ark-ui/react/portal";
 import { type DateValue, parseDate } from "@internationalized/date";
 import { useState } from "react";
-import { formatDateKey } from "@/lib/time";
+import { IST_TZ, formatDateKey } from "@/lib/time";
 
 // A dark, monospace date-range picker built on Ark UI's DatePicker (range
 // mode) — accessible + keyboard-navigable out of the box, styled to match the
@@ -39,6 +39,7 @@ export function RangeDatePicker({
         }
       }}
       selectionMode="range"
+      timeZone={IST_TZ}
       fixedWeeks
       startOfWeek={0}
       value={value}

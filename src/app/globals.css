@@ -30,8 +30,6 @@
   --color-stamp-down: #ff4d67;
   --color-stamp-clear: #44d17a;
   --color-stamp-restored: #ffc857;
-  /* legacy alias */
-  --color-stamp-op: #44d17a;
 
   /* Text */
   --color-text: #f5f7fa;
@@ -47,15 +45,8 @@
   /* Radius — 8px everywhere, never pill, never fully square */
   --radius: 8px;
 
-  /* Breakpoints (mobile-first; defaults are mobile) */
+  /* Breakpoint used by the report sheet (mobile-first; defaults are mobile) */
   --breakpoint-tablet: 640px;
-  --breakpoint-desktop: 1024px;
-
-  /* Motion durations */
-  --dur-press: 120ms;
-  --dur-panel: 180ms;
-  --dur-sheet: 250ms;
-  --dur-stamp: 400ms;
 }
 
 /* ─── Base ─────────────────────────────────────────────────────────────────*/
@@ -66,6 +57,10 @@
 html {
   color-scheme: dark;
   background: var(--color-bg);
+  /* Always reserve the scrollbar gutter so centered layouts (incl. the sticky
+     top bar) don't shift horizontally between pages that scroll and pages that
+     don't. Overlay scrollbars (mobile) are unaffected. */
+  scrollbar-gutter: stable;
 }
 
 body {

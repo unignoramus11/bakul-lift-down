@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminDot } from "./AdminDot";
 import { ISTClock } from "./ISTClock";
 import { Logo } from "./Logo";
 
@@ -24,7 +25,7 @@ export function StatusStrip() {
         </Link>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="size-1.5 rounded-full bg-danger rec-dot" aria-hidden />
+          <AdminDot />
           <ISTClock className="font-tele text-[12px] tracking-[0.06em] text-text-2 tabular-nums" />
         </div>
       </div>

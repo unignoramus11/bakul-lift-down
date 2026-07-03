@@ -50,7 +50,3 @@ export async function compressImage(
     originalBytes,
   };
 }
-
-export function formatKB(bytes: number): string {
-  return `${(bytes / 1024).toFixed(1)} KB`;
-}

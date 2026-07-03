@@ -31,11 +31,3 @@ export const STATUS_TONE: Record<DayStatus, Tone> = {
   CLEAR: "operational",
   EMPTY: "offline",
 };
-
-// Hex values (for the canvas seed + PDF, which can't read CSS vars).
-export const STATUS_HEX: Record<DayStatus, string> = {
-  DOWN: "#FF4D67",
-  RESTORED: "#FFC857",
-  CLEAR: "#44D17A",
-  EMPTY: "#5F6B7A",
-};
