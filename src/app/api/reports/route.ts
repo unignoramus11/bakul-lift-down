@@ -3,6 +3,9 @@ import {
   MAX_IMAGE_BYTES_HARD,
   MAX_IMAGE_KB,
   MAX_NOTE_LEN,
+  MAX_PHOTO_AGE_MIN,
+  MAX_PHOTO_AGE_MS,
+  SERVER_PHOTO_AGE_GRACE_MS,
 } from "@/lib/config";
 import {
   createReport,
@@ -78,6 +81,7 @@ export async function POST(req: Request) {
     imageBytes,
     note,
     deviceId,
+    takenAt,
   } = (body ?? {}) as Record<string, unknown>;
 
   if (kind !== "DOWN" && kind !== "RESTORED") {
@@ -93,6 +97,18 @@ export async function POST(req: Request) {
   }
   if (typeof note === "string" && note.length > MAX_NOTE_LEN) {
     return bad(`Note must be ${MAX_NOTE_LEN} characters or fewer.`);
+  }
+
+  // Soft re-check of the client-reported capture time. Lenient (client already
+  // gated at capture + allow for time spent in the flow); refuse only clearly
+  // stale photos. Unknown/missing time is allowed.
+  if (typeof takenAt === "string") {
+    const t = Date.parse(takenAt);
+    if (!Number.isNaN(t) && Date.now() - t > MAX_PHOTO_AGE_MS + SERVER_PHOTO_AGE_GRACE_MS) {
+      return bad(
+        `Photo is too old — reports need a photo taken within ${MAX_PHOTO_AGE_MIN} minutes. Take a fresh one.`,
+      );
+    }
   }
 
   // Per-device daily cap (all report kinds share the same allowance).

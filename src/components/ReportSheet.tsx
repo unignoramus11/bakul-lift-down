@@ -3,9 +3,10 @@
 import { Dialog } from "@ark-ui/react/dialog";
 import { useRef, useState } from "react";
 import { clsx } from "@/lib/clsx";
-import { MAX_NOTE_LEN } from "@/lib/config";
+import { MAX_NOTE_LEN, MAX_PHOTO_AGE_MIN } from "@/lib/config";
 import { type CompressResult, compressImage } from "@/lib/compress";
 import { getDeviceId } from "@/lib/device";
+import { checkPhotoFreshness } from "@/lib/photoFreshness";
 import type { ReportDTO } from "@/lib/reports";
 import { formatISTDate, formatISTTime } from "@/lib/time";
 import { CompressionMeter } from "./CompressionMeter";
@@ -39,11 +40,29 @@ export function ReportSheet({
   const [note, setNote] = useState("");
   const [stampAt, setStampAt] = useState<Date>(() => new Date());
   const [error, setError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
+  // Detected capture time (EXIF/file) — sent to the server for a soft re-check.
+  const [takenAt, setTakenAt] = useState<Date | null>(null);
 
   // State resets on open because the parent remounts this component with a
   // fresh key each time it's opened — no reset effect needed.
 
   async function handleFile(file: File) {
+    setError(null);
+
+    // Freshness gate: reject stale photos before doing any work (read from the
+    // original file — compression strips the metadata).
+    setChecking(true);
+    const fresh = await checkPhotoFreshness(file);
+    setChecking(false);
+    if (!fresh.ok) {
+      setError(
+        `This photo was taken more than ${MAX_PHOTO_AGE_MIN} minutes ago. Please take a fresh photo of the lift right now.`,
+      );
+      return; // stay on the pick step
+    }
+    setTakenAt(fresh.takenAt);
+
     setStep("compressing");
     setPercent(0);
     setPreview((p) => {
@@ -77,6 +96,7 @@ export function ReportSheet({
           imageBytes: result.bytes,
           note: note.trim() || null,
           deviceId: getDeviceId(),
+          takenAt: takenAt ? takenAt.toISOString() : null,
         }),
       });
       if (!res.ok) {
@@ -156,7 +176,18 @@ export function ReportSheet({
             />
 
             {step === "pick" ? (
-              <PickTarget accent={accent} onPick={() => fileInput.current?.click()} />
+              <div className="space-y-3">
+                {error ? (
+                  <p className="rounded-md border border-border-alert bg-danger/10 px-3 py-2 font-body text-[13px] text-danger">
+                    {error}
+                  </p>
+                ) : null}
+                <PickTarget
+                  accent={accent}
+                  busy={checking}
+                  onPick={() => fileInput.current?.click()}
+                />
+              </div>
             ) : (
               <div className="space-y-4">
                 {/* preview with viewfinder brackets */}
@@ -281,15 +312,18 @@ export function ReportSheet({
 function PickTarget({
   accent,
   onPick,
+  busy,
 }: {
   accent: string;
   onPick: () => void;
+  busy?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onPick}
-      className="group relative flex aspect-4/3 w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-bg-2 transition-colors duration-150 hover:border-text-muted"
+      disabled={busy}
+      className="group relative flex aspect-4/3 w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-bg-2 transition-colors duration-150 hover:border-text-muted disabled:opacity-60"
     >
       <Brackets accent={accent} />
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -301,10 +335,10 @@ function PickTarget({
         <circle cx="12" cy="13" r="3.2" stroke={accent} strokeWidth="1.4" />
       </svg>
       <span className="font-ui text-[14px] font-semibold tracking-[0.12em] text-text-2">
-        CAPTURE / UPLOAD PHOTO
+        {busy ? "CHECKING PHOTO…" : "CAPTURE / UPLOAD PHOTO"}
       </span>
       <span className="font-tele text-[11px] tracking-[0.08em] text-text-muted">
-        photo of the lift&apos;s current state
+        {busy ? "verifying it was just taken" : "fresh photo of the lift, taken now"}
       </span>
     </button>
   );
